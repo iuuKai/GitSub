@@ -1,0 +1,64 @@
+.markdown-anchor {
+  @apply !p-4;
+}
+
+.markdown-body {
+  @apply min-w-0 py-4 px-7;
+
+  :global(a.anchor) {
+    @apply absolute -ml-6 invisible;
+    @apply text-dark-900 dark:text-light-900;
+
+    span {
+      @apply text-xl;
+    }
+  }
+
+  p {
+    @apply mb-4;
+  }
+
+  img {
+    @apply inline-block;
+  }
+
+  hr {
+    @apply my-6 p-0 h-1 border-none bg-light-600 dark:bg-dark-200;
+  }
+
+  :global(.code_wrap) {
+    @apply relative;
+
+    :global(button[data-type='copy']) {
+      @apply absolute invisible px-2 top-14px right-14px border-none rounded-md select-none z-1;
+      @apply bg-dark-50 bg-opacity-20 dark:(bg-light-50 bg-opacity-20);
+    }
+
+    &:hover {
+      :global(button[data-type='copy']) {
+        visibility: visible;
+        opacity: 1;
+      }
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply -ml-6 pl-6;
+
+    &:hover {
+      :global(a.anchor) {
+        @apply visible;
+      }
+    }
+  }
+
+  table th,
+  table td {
+    @apply px-3 py-1 border-1 border-dark-50 border-opacity-20 dark:(border-light-50 border-opacity-20);
+  }
+}

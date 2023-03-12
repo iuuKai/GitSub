@@ -1,0 +1,47 @@
+.login-header {
+  @apply relative m-auto w-7/10 h-80px flex justify-between items-center  text-white leading-none z-1;
+}
+
+.login-main {
+  @apply absolute top-1/2 left-1/2 w-800px h-420px transform -translate-x-1/2 -translate-y-1/2;
+  @apply flex bg-light-50 bg-opacity-10 backdrop-filter backdrop-blur-md text-base;
+
+  &.is-light-image {
+    .login-switch-box {
+      @apply bg-dark-50 bg-opacity-20;
+
+      .login-switch-button {
+        @apply text-black text-opacity-85 bg-light-50  bg-opacity-30 hover:bg-opacity-50 active:bg-opacity-80;
+      }
+    }
+  }
+
+  .login-form {
+    // 高 110%，向上位移 10 / 2 = 5%
+    @apply absolute -top-1/20 left-0 w-1/2 h-11/10 z-1 duration-300;
+
+    &.is-gitee {
+      @apply left-1/2;
+    }
+
+    :global(.ant-tabs) {
+      @apply mt-5;
+
+      :global(.ant-input) {
+        @apply mb-2;
+      }
+    }
+  }
+
+  .login-switch-box {
+    @apply transition-colors duration-300;
+    @apply w-1/2 flex flex-col items-center bg-light-50 bg-opacity-20;
+
+    .login-switch-button {
+      // transition: .3s background-color;
+      @apply transition-colors duration-300;
+      @apply block mt-2 py-2 w-4/5 text-white text-opacity-85 rounded-md;
+      @apply bg-dark-900 bg-opacity-30 hover:bg-opacity-50 active:bg-opacity-80;
+    }
+  }
+}

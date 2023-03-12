@@ -1,0 +1,6 @@
+@font-face {
+  font-family: Konexy;
+
+  src: url('?#iefix') format('embedded-opentype'),
+  url('@/fonts/Konexy/Konexy-Personal-Use-2.ttf') format('truetype');
+}

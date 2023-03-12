@@ -1,0 +1,60 @@
+.gradients {
+  background-size: 200% 100%;
+
+  @apply text-light-50 bg-gradient-to-r overflow-hidden;
+  @apply from-fuchsia-500 via-indigo-500 to-fuchsia-500 dark:(from-green-500 via-blue-500 to-green-500);
+
+  &.is-text {
+    @apply text-transparent bg-clip-text;
+  }
+
+  &.is-full {
+    @apply w-full h-full;
+  }
+
+  &.is-circle {
+    @apply inline-block rounded-1/2 border-transparent;
+  }
+
+  &.auto-play {
+    animation: fluid 5s linear infinite;
+
+    &.is-circle {
+      animation: round 5s linear infinite;
+
+      .circle-static-round {
+        animation: roundreverse 5s linear infinite;
+      }
+    }
+  }
+}
+
+@keyframes fluid {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes round {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes roundreverse {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(-360deg);
+  }
+}
