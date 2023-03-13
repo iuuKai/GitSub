@@ -2,13 +2,14 @@
  * @Author: iuukai
  * @Date: 2023-03-06 05:49:54
  * @LastEditors: iuukai
- * @LastEditTime: 2023-03-09 20:34:17
+ * @LastEditTime: 2023-03-12 16:49:51
  * @FilePath: \gitsub\src\views\Repo\pages\Tree.vue
  * @Description: 
  * @QQ/微信: 790331286
 -->
 <template>
 	<div>
+		<a-button @click="handleClick">click</a-button>
 		<div class="file-list_container">
 			<Gradients type="border" />
 			<FileList
@@ -41,7 +42,7 @@ import { useRepoStore } from '@/store/modules/repo'
 import { useThemeStore } from '@/store/modules/theme'
 import { Base64 } from '@/utils/crypto'
 import { toLower, isArray } from 'lodash-es'
-import { fileDownload } from '@/utils/file-download'
+import { fileDownload, foo } from '@/utils/file-download'
 
 const route = useRoute()
 const router = useRouter()
@@ -67,6 +68,17 @@ watch(route, n => {
 
 	getRepoData()
 })
+
+async function handleClick() {
+	try {
+		const { owner, repo } = route.params
+		const sha = repoStore.getDetails.default_branch
+		const blobStr = await repoStore.apiGetRepoDownloadZIP({ owner, repo, sha })
+		foo(blobStr)
+	} catch (err) {
+		console.error(err)
+	}
+}
 
 getRepoData()
 async function getRepoData() {

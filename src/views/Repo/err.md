@@ -38,3 +38,9 @@
 
 1. 贡献者
 2. 文件内容
+
+```html
+<template>
+	<div>123</div>
+</template>
+```

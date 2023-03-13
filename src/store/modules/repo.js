@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-11-30 08:07:33
  * @LastEditors: iuukai
- * @LastEditTime: 2023-03-09 06:11:42
+ * @LastEditTime: 2023-03-12 16:20:59
  * @FilePath: \gitsub\src\store\modules\repo.js
  * @Description:
  * @QQ/微信: 790331286
@@ -22,7 +22,8 @@ import {
 	getRepoTagList,
 	getRepoCommit,
 	getRepoCommitList,
-	getRepoNetworksEventList
+	getRepoNetworksEventList,
+	getRepoDownloadZIP
 } from '@/api/repo'
 
 export const useRepoStore = defineStore({
@@ -92,6 +93,10 @@ export const useRepoStore = defineStore({
 		// 获取仓库所有公开动态
 		apiGetRepoNetworksEventList(params) {
 			return getRepoNetworksEventList(params)
+		},
+		// 下载仓库 zip
+		apiGetRepoDownloadZIP(params) {
+			return getRepoDownloadZIP(params)
 		}
 	}
 })

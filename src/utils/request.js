@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-10-24 09:46:45
  * @LastEditors: iuukai
- * @LastEditTime: 2023-01-15 23:59:42
+ * @LastEditTime: 2023-03-13 18:40:05
  * @FilePath: \gitsub\src\utils\request.js
  * @Description:
  * @QQ/微信: 790331286
@@ -21,6 +21,7 @@ const request = axios.create({
 	baseURL: isLocalhost ? import.meta.env.VITE_REQUEST_DEV : import.meta.env.VITE_REQUEST_BASEURL
 	// timeout
 })
+console.log(isLocalhost ? import.meta.env.VITE_REQUEST_DEV : import.meta.env.VITE_REQUEST_BASEURL)
 
 // 请求拦截
 request.interceptors.request.use(

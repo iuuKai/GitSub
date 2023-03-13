@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-01-01 13:07:26
  * @LastEditors: iuukai
- * @LastEditTime: 2023-03-09 06:17:22
+ * @LastEditTime: 2023-03-12 16:20:20
  * @FilePath: \gitsub\src\api\repo\index.js
  * @Description:
  * @QQ/微信: 790331286
@@ -138,6 +138,17 @@ export function getRepoCommitList(params = {}) {
 export function getRepoCommit(params = {}) {
 	const { owner, repo, sha } = params
 	const url = `/repos/${owner}/${repo}/commits/${sha}`
+	return request({
+		url,
+		method: 'get',
+		params
+	}).then(res => res.data)
+}
+
+// 下载仓库
+export function getRepoDownloadZIP(params = {}) {
+	const { owner, repo, sha } = params
+	const url = `/repos/${owner}/${repo}/zipball/${sha}`
 	return request({
 		url,
 		method: 'get',

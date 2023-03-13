@@ -2,13 +2,14 @@
  * @Author: iuukai
  * @Date: 2023-03-09 09:42:15
  * @LastEditors: iuukai
- * @LastEditTime: 2023-03-09 10:05:21
+ * @LastEditTime: 2023-03-12 17:08:50
  * @FilePath: \gitsub\src\utils\file-download.js
  * @Description:
  * @QQ/微信: 790331286
  */
 import { saveAs } from 'file-saver'
 import { Base64 } from './crypto'
+import JSZip from 'jszip'
 import cryptoRandomString from 'crypto-random-string'
 
 export function fileDownload(content, name) {
@@ -34,4 +35,14 @@ export function fileDownload(content, name) {
 		: `${cryptoRandomString({ length: 10, type: 'alphanumeric' }) + name}`
 	saveAs(blob, fileName)
 	return fileName
+}
+
+export const foo = async blobStr => {
+	// const blob = new Blob([blobStr], {
+	// 	type: 'application/zip'
+	// })
+	// saveAs(blob, 'demo.zip')
+	const zip = await JSZip.loadAsync(blobStr, { binary: true })
+	const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' })
+	saveAs(zipBlob, 'filename.zip')
 }
