@@ -102,7 +102,7 @@ export const useAccountStore = defineStore({
 						// 无code则拿到回调地址访问获取
 						const { url } = await getOauthLink(params)
 						// 获取 code
-						location.href = url
+						// location.href = url
 					} else {
 						// 有code则参数附带
 						params.code = this.getCode
