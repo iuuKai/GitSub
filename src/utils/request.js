@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-10-24 09:46:45
  * @LastEditors: iuukai
- * @LastEditTime: 2023-03-15 07:48:33
+ * @LastEditTime: 2023-03-15 09:12:14
  * @FilePath: \gitsub\src\utils\request.js
  * @Description:
  * @QQ/微信: 790331286
@@ -14,13 +14,12 @@ import { message as $message } from 'ant-design-vue'
 const tkey = 'token'
 const timeout = 5000
 const UNKNOWN_ERROR = '未知错误，请重试'
-// const isLocalhost = location.hostname === 'localhost'
-const isLocalhost = false
+const isLocalhost = location.hostname === 'localhost'
 
 // 创建实例
 const request = axios.create({
-	baseURL: import.meta.env.VITE_REQUEST_BUILD
-	// baseURL: isLocalhost ? import.meta.env.VITE_REQUEST_DEV : import.meta.env.VITE_REQUEST_BASEURL
+	// baseURL: import.meta.env.VITE_REQUEST_BUILD
+	baseURL: isLocalhost ? import.meta.env.VITE_REQUEST_DEV : import.meta.env.VITE_REQUEST_BASEURL
 	// timeout
 })
 console.log(isLocalhost, import.meta.env)

@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-11-13 06:16:48
  * @LastEditors: iuukai
- * @LastEditTime: 2023-01-05 01:45:02
+ * @LastEditTime: 2023-03-15 09:19:32
  * @FilePath: \gitsub\src\store\modules\account.js
  * @Description:
  * @QQ/微信: 790331286
@@ -102,7 +102,7 @@ export const useAccountStore = defineStore({
 						// 无code则拿到回调地址访问获取
 						const { url } = await getOauthLink(params)
 						// 获取 code
-						// location.href = url
+						location.href = url
 					} else {
 						// 有code则参数附带
 						params.code = this.getCode
