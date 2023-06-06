@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-10-21 08:11:00
  * @LastEditors: iuukai
- * @LastEditTime: 2023-01-30 22:31:33
+ * @LastEditTime: 2023-05-14 01:22:12
  * @FilePath: \gitsub\windi.config.js
  * @Description:
  * @QQ/微信: 790331286
@@ -13,6 +13,7 @@ import plugin from 'windicss/plugin'
 import colors from 'windicss/colors'
 
 export default defineConfig({
+	// 取消默认样式重置
 	// preflight: false,
 	darkMode: 'class', // or 'media'
 	theme: {
@@ -46,6 +47,9 @@ export default defineConfig({
 			...baseConfig.theme.cursor,
 			'zoom-in': 'zoom-in'
 		}
+		// listStyleType: {
+		// 	auto: 'auto'
+		// }
 		// boxShadow: {
 		// 	// sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
 		// 	// DEFAULT: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',

@@ -2,20 +2,13 @@
  * @Author: iuukai
  * @Date: 2023-03-04 14:58:53
  * @LastEditors: iuukai
- * @LastEditTime: 2023-03-09 18:27:09
+ * @LastEditTime: 2023-06-03 19:45:43
  * @FilePath: \gitsub\src\views\Repo\components\file-list.jsx
  * @Description:
  * @QQ/微信: 790331286
  */
-import { defineComponent, h } from 'vue'
-import {
-	UserOutlined,
-	HddOutlined,
-	FolderFilled,
-	FolderOutlined,
-	FileOutlined,
-	CloudDownloadOutlined
-} from '@ant-design/icons-vue'
+import { computed, defineComponent, h, unref } from 'vue'
+import { FolderFilled, FileOutlined, CloudDownloadOutlined } from '@ant-design/icons-vue'
 import { useRoute } from 'vue-router'
 import { toLower } from 'lodash-es'
 import { byteConvert } from '@/utils/common'
@@ -32,13 +25,32 @@ export default defineComponent({
 	emits: ['file-click', 'download-click'],
 	setup(props, { emit }) {
 		const route = useRoute()
+
+		const sourceList = computed(() => {
+			const arr = props.list.map(item => ({ ...item }))
+			const { path } = route.params
+
+			if (path && path.length) {
+				arr.unshift({
+					type: 'back',
+					name: '../',
+					path: path.slice(0, path.length - 1).join('/')
+				})
+			}
+			return arr
+		})
+
+		const renderIcon = (type, isHide) => {
+			const icon = type === 'dir' ? FolderFilled : FileOutlined
+			const iconProps = { style: { fontSize: '16px' } }
+			return isHide ? <span class={style['icon-blank']}></span> : h(icon, iconProps)
+		}
+
 		const slots = {
 			renderItem: ({ item }) => {
 				const { type } = route.params
+				const isBack = item.type === 'back'
 				const isGitee = toLower(type) === 'gitee'
-				const isDir = item.type === 'dir'
-				const icon = isDir ? FolderFilled : FileOutlined
-				const iconProps = { style: { fontSize: '16px' } }
 				const listItemSlots = {
 					actions: () => (
 						<>
@@ -49,17 +61,17 @@ export default defineComponent({
 				const listItemMetaSlots = {
 					title: () => (
 						<a-space size={10}>
-							{h(icon, iconProps)}
-							<a onClick={() => emit('file-click', item)} title={item.name}>
+							{renderIcon(item.type, isBack)}
+							<a onClick={() => emit('file-click', item)} title={isBack ? null : item.name}>
 								{item.name}
 							</a>
 						</a-space>
 					)
 				}
 				return (
-					<a-list-item v-slots={listItemSlots}>
+					<a-list-item v-slots={isBack ? null : listItemSlots} class={style['list_row']}>
 						<a-list-item-meta v-slots={listItemMetaSlots}></a-list-item-meta>
-						{!isDir && (
+						{!isBack && !item.type === 'dir' && (
 							<div
 								style={{
 									width: '120px',
@@ -82,11 +94,11 @@ export default defineComponent({
 		return () => {
 			const { list } = props
 
-			return (
+			return list.length ? (
 				<a-card bodyStyle={{ padding: 0 }}>
-					<a-list size="small" data-source={list} v-slots={slots}></a-list>
+					<a-list size="small" data-source={unref(sourceList)} v-slots={slots}></a-list>
 				</a-card>
-			)
+			) : null
 		}
 	}
 })

@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-10-21 05:47:03
  * @LastEditors: iuukai
- * @LastEditTime: 2023-02-16 23:40:18
+ * @LastEditTime: 2023-04-23 08:53:29
  * @FilePath: \gitsub\src\plugins\antd.js
  * @Description:
  * @QQ/微信: 790331286
@@ -13,9 +13,14 @@ import Antd, { Button, Switch, Input, Checkbox, Row, message } from 'ant-design-
 // import 'dayjs/locale/zh-cn';
 
 export function setupAntd(app) {
-	message.config({
+	const MESSAGE_GLOBAL_CONFIG = {
 		top: '70px'
-	})
+	}
+	message.reset = function () {
+		this.config(MESSAGE_GLOBAL_CONFIG)
+	}
+
+	message.config(MESSAGE_GLOBAL_CONFIG)
 	// 引入cdn后，不需要按需导入了
 	app.use(Antd)
 	// app.use(Button).use(Switch).use(Input).use(Checkbox).use(Row)

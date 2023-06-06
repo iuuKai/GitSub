@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-02-24 00:42:49
  * @LastEditors: iuukai
- * @LastEditTime: 2023-03-03 21:11:25
+ * @LastEditTime: 2023-03-17 02:15:25
  * @FilePath: \gitsub\src\views\Repo\err.md
  * @Description:
  * @QQ/微信: 790331286
@@ -44,3 +44,7 @@
 	<div>123</div>
 </template>
 ```
+
+## 优化
+
+1. 锚点变更会重新调用请求

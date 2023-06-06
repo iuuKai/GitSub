@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-10-21 00:44:41
  * @LastEditors: iuukai
- * @LastEditTime: 2023-02-02 07:39:38
+ * @LastEditTime: 2023-04-25 16:58:30
  * @FilePath: \gitsub\vite.config.js
  * @Description:
  * @QQ/微信: 790331286
@@ -10,8 +10,8 @@
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import { prismjsPlugin } from 'vite-plugin-prismjs'
 import WindiCSS from 'vite-plugin-windicss'
+import { prismjsPlugin } from 'vite-plugin-prismjs'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { Plugin as importToCDN } from 'vite-plugin-cdn-import'

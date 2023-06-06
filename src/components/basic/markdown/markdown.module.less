@@ -1,64 +1,242 @@
-.markdown-anchor {
-  @apply !p-4;
+.is-fullscreen {
+  @apply h-full overflow-y-auto;
+  @apply bg-light-50 dark:bg-dark-900;
 }
 
-.markdown-body {
-  @apply min-w-0 py-4 px-7;
+.markdown-anchor {
+  @apply p-4 pr-1 h-full border-r-2 border-r-light-500 dark:border-r-dark-300;
+}
 
-  :global(a.anchor) {
-    @apply absolute -ml-6 invisible;
-    @apply text-dark-900 dark:text-light-900;
+.md_pd_wrap {
+  @apply py-4 px-8;
 
-    span {
-      @apply text-xl;
-    }
-  }
+  .markdown-body {
+    @apply min-w-0 break-words;
 
-  p {
-    @apply mb-4;
-  }
-
-  img {
-    @apply inline-block;
-  }
-
-  hr {
-    @apply my-6 p-0 h-1 border-none bg-light-600 dark:bg-dark-200;
-  }
-
-  :global(.code_wrap) {
-    @apply relative;
-
-    :global(button[data-type='copy']) {
-      @apply absolute invisible px-2 top-14px right-14px border-none rounded-md select-none z-1;
-      @apply bg-dark-50 bg-opacity-20 dark:(bg-light-50 bg-opacity-20);
+    &::after {
+      @apply table content-[''] clear-both;
     }
 
-    &:hover {
+    * ~ h1,
+    * ~ h2,
+    * ~ h3,
+    * ~ h4,
+    * ~ h5,
+    * ~ h6 {
+      @apply mt-6;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      @apply -ml-6 pl-6;
+
+      &:hover {
+        :global(a.anchor) {
+          @apply visible;
+        }
+      }
+
+      &:not(h3,h4,h5,h6) {
+        @apply relative pb-1;
+
+        &::after {
+          @apply absolute right-0 bottom-0 content-[''] h-2px w-[calc(100%-1.5rem)];
+          @apply bg-light-500 dark:bg-dark-300;
+        }
+      }
+    }
+
+    p,
+    ul,
+    ol,
+    dl,
+    pre,
+    table,
+    details,
+    blockquote, {
+      @apply mt-0 mb-4;
+    }
+
+    ul,
+    ol {
+      &:not(:global(.task-list)) {
+        @apply pl-7;
+
+        &:is(ul) {
+          @apply list-disc;
+        }
+
+        &:is(ol) {
+          @apply list-decimal;
+        }
+
+        ul,
+        ol {
+          &:is(ul) {
+            @apply list-circle;
+          }
+
+          &:is(ol) {
+            @apply list-roman;
+          }
+
+          ul,
+          ol {
+            &:is(ul) {
+              @apply list-square;
+            }
+
+            &:is(ol) {
+              @apply list-alpha;
+            }
+          }
+        }
+      }
+    }
+
+    img {
+      @apply inline-block max-w-full h-auto;
+
+      &:not(:last-child) {
+        @apply mt-0 mb-4;
+      }
+    }
+
+    /* 复选框未选中时的颜色 */
+    input[type="checkbox"] {
+      @apply appearance-none;
+
+      &::before {
+        @apply content-['⬜'];
+      }
+
+      &:checked::before {
+        @apply content-['☑️'] dark:content-['✅'];
+      }
+    }
+
+    tt,
+    kbd,
+    pre,
+    code:not([class*="language-"]), {
+      @apply rounded-md;
+    }
+
+    tt,
+    kbd,
+    code:not([class*="language-"]), {
+      @apply text-xs leading-3;
+    }
+
+    tt,
+    code:not([class*="language-"]), {
+      @apply m-0 py-1 px-2 whitespace-pre-wrap bg-gray-200 dark:bg-dark-100;
+    }
+
+    kbd {
+      @apply inline-block py-1 px-2 align-middle break-words border shadow-inner ;
+      @apply border-gray-200 border-b-gray-400 bg-light-300 shadow-gray-300;
+      @apply dark:(border-dark-50 border-b-dark-200 bg-dark-100 shadow-dark-300);
+    }
+
+    hr {
+      @apply my-6 p-0 h-1 border-none bg-light-600 dark:bg-dark-200;
+    }
+
+    table {
+      @apply block w-max max-w-full overflow-auto;
+
+      th,
+      td {
+        @apply px-3 py-1 border-1 border-dark-50 border-opacity-20 dark:(border-light-50 border-opacity-20);
+      }
+
+      thead tr,
+      tbody tr:nth-child(2n) {
+        @apply bg-gray-100 dark:bg-dark-600;
+      }
+    }
+
+    blockquote {
+      @apply py-0 px-4 border-l-width-4 text-gray-400;
+      @apply border-gray-300 bg-gray-50 dark:(border-dark-200 bg-dark-700);
+    }
+
+    mark {
+      @apply bg-green-100;
+    }
+
+    themed-picture {
+      @apply invisible;
+    }
+
+    [data-catalyst-inline] {
+      @apply inline;
+    }
+
+    auto-complete,
+    details-dialog,
+    details-menu,
+    file-attachment,
+    filter-input,
+    remote-input,
+    tab-container,
+    text-expander,
+    turbo-frame,
+    [data-catalyst] {
+      @apply block;
+    }
+
+    :global(.mermaid),
+    :global(.diagram) {
+      @apply mt-0 mb-4 text-center;
+    }
+
+    :global(.diagram) {
+      svg {
+        @apply max-w-full;
+
+        rect,
+        path[class] {
+          @apply stroke-1 fill-[#ECECFF] stroke-[#9370DB] dark:(fill-[#1f2020] stroke-[#81B1DB]);
+        }
+
+        text {
+          @apply dark:fill-[lightgrey];
+        }
+
+        path:not([class]) {
+          @apply dark:(fill-none stroke-[lightgrey]);
+        }
+      }
+    }
+
+    :global(a.anchor) {
+      @apply float-left -ml-6 invisible;
+      @apply text-dark-900 dark:text-light-900;
+
+      span {
+        @apply text-xl leading-none;
+      }
+    }
+
+    :global(.code_wrap) {
+      @apply relative;
+
       :global(button[data-type='copy']) {
-        visibility: visible;
-        opacity: 1;
+        @apply absolute invisible px-2 top-14px right-14px border-none rounded-md select-none z-1;
+        @apply bg-dark-50 bg-opacity-20 dark:(bg-light-50 bg-opacity-20);
+      }
+
+      &:hover {
+        :global(button[data-type='copy']) {
+          @apply visible opacity-100;
+        }
       }
     }
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply -ml-6 pl-6;
-
-    &:hover {
-      :global(a.anchor) {
-        @apply visible;
-      }
-    }
-  }
-
-  table th,
-  table td {
-    @apply px-3 py-1 border-1 border-dark-50 border-opacity-20 dark:(border-light-50 border-opacity-20);
   }
 }

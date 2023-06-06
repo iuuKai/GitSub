@@ -8,6 +8,7 @@
  * @QQ/微信: 790331286
  */
 import { LOGIN_NAME } from '@/router/constant'
+import FullScreen from './staticModules/fullscreen'
 
 /**
  * layout布局之外的路由
@@ -21,4 +22,4 @@ export const LoginRoute = {
 	}
 }
 
-export default [LoginRoute]
+export default [LoginRoute, FullScreen]

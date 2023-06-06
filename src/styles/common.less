@@ -1,7 +1,7 @@
 // 滚动槽
 *::-webkit-scrollbar-track {
   // background-color: transparent;
-  @apply bg-gray-100 dark:(bg-transparent);
+  // @apply bg-gray-100 dark:(bg-transparent);
 }
 
 /* 滚动条凹槽的颜色，还可以设置边框属性 */
@@ -13,13 +13,14 @@
 *::-webkit-scrollbar {
   @apply w-7px h-7px;
 }
+// #0000004d
 
 /* 滚动条的设置 */
 *::-webkit-scrollbar-thumb {
-  @apply bg-gray-200 dark:bg-dark-50;
+  @apply bg-true-gray-400 dark:bg-dark-100 rounded-xl;
 }
 
 /* 滚动条鼠标移上去 */
 *::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-300 dark:bg-dark-100;
+  @apply bg-true-gray-500 dark:bg-dark-50;
 }

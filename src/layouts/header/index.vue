@@ -23,7 +23,9 @@
 					<template #overlay>
 						<Menu>
 							<Menu.Item @click="$router.push({ name: 'account-about' })">个人中心</Menu.Item>
-							<Menu.Item @click="$router.push({ name: 'Home', params: { owner: 'X4' } })">
+							<Menu.Item
+								@click="$router.push({ name: 'Home', params: { type: 'github', owner: 'X4' } })"
+							>
 								我的主页
 							</Menu.Item>
 							<Menu.Item @click="$router.push({ name: 'account-about' })">关于</Menu.Item>

@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-12-28 00:13:22
  * @LastEditors: iuukai
- * @LastEditTime: 2023-03-04 17:34:50
+ * @LastEditTime: 2023-04-07 18:23:29
  * @FilePath: \gitsub\src\views\Home\Tabs\Repositories.vue
  * @Description: 
  * @QQ/微信: 790331286
@@ -43,7 +43,7 @@
 											></span>
 											<a-typography-text type="secondary">{{ item.language }}</a-typography-text>
 										</a-space>
-										<a-typography-text v-if="item.license && item.license.name" type="secondary">
+										<a-typography-text v-if="item.license?.name" type="secondary">
 											{{ item.license.name }}
 										</a-typography-text>
 										<a-typography-text type="secondary">

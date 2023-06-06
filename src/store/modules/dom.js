@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-01-31 16:23:30
  * @LastEditors: iuukai
- * @LastEditTime: 2023-02-19 06:33:01
+ * @LastEditTime: 2023-04-22 05:38:34
  * @FilePath: \gitsub\src\store\modules\dom.js
  * @Description:
  * @QQ/微信: 790331286
@@ -13,7 +13,9 @@ export const useDomStore = defineStore({
 	id: 'dom',
 	state: () => ({
 		headerContainer: null,
-		scrollContainer: null
+		scrollContainer: null,
+		scrollX: 0,
+		scrollY: 0
 	}),
 	getters: {
 		getHeaderContainer() {
@@ -21,6 +23,9 @@ export const useDomStore = defineStore({
 		},
 		getScrollContainer() {
 			return this.scrollContainer
+		},
+		getScroll() {
+			return { x: this.scrollX, y: this.scrollY }
 		}
 	},
 	actions: {
@@ -29,6 +34,12 @@ export const useDomStore = defineStore({
 		},
 		setScrollContainer(el) {
 			this.scrollContainer = el
+		},
+		setScrollX(x) {
+			this.scrollX = x
+		},
+		setScrollY(y) {
+			this.scrollY = y
 		}
 	}
 })

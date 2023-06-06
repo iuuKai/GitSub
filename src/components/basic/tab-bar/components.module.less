@@ -1,0 +1,48 @@
+.no-margin {
+  @apply !m-0;
+}
+
+// tabs导航
+.navbar_tabs_wrap {
+  @apply flex;
+
+  .navbar_tabs_item {
+    & ~ .navbar_tabs_item {
+      @apply ml-3;
+    }
+
+    .navbar_tabs_button {
+      @apply px-6 py-2 leading-none rounded-md cursor-pointer select-none;
+      @apply bg-blue-gray-200 dark:(bg-dark-300);
+
+      &.is-active {
+        @apply text-white bg-gradient-to-br from-fuchsia-500 to-indigo-500 dark:(from-green-500 to-blue-500);
+      }
+    }
+  }
+}
+
+// 用户面板
+.user_profile_wrap {
+  @apply flex flex-col justify-center items-center;
+
+  .user_profile_avatar {
+    @apply cursor-pointer;
+    // @apply shadow-circle dark:shadow-gray-400;
+
+    .avatar {
+      @apply relative;
+
+      &::before {
+        @apply absolute content-[''] top-0 -left-20 w-8 h-full bg-light-50 bg-opacity-50;
+        @apply transform -skew-x-45 translate-x-0;
+      }
+
+      &:hover {
+        &::before {
+          @apply duration-500 ease-in-out transform -skew-x-45 translate-x-96;
+        }
+      }
+    }
+  }
+}

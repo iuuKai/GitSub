@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-10-21 06:36:35
  * @LastEditors: iuukai
- * @LastEditTime: 2023-03-06 16:14:38
+ * @LastEditTime: 2023-04-05 10:25:17
  * @FilePath: \gitsub\src\router\router-guards.js
  * @Description:
  * @QQ/微信: 790331286
@@ -10,7 +10,6 @@
 import NProgress from 'nprogress' // progress bar
 import { isNavigationFailure } from 'vue-router'
 import { useAccountStore } from '@/store/modules/account'
-import { useOwnerStore } from '@/store/modules/owner'
 import { defaultRoutePath, namedRouteParam, LOGIN_NAME, namedRouteName } from './constant'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
@@ -18,9 +17,7 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 export function createRouterGuards(router, whiteNameList) {
 	router.beforeEach(async (to, from, next) => {
 		const accountStore = useAccountStore()
-		const ownerStore = useOwnerStore()
 		const token = accountStore.getToken
-		const type = accountStore.getType
 
 		// 锚点不进行操作
 		if (token && to.path === from.path && to.path !== defaultRoutePath) return next()
@@ -41,28 +38,7 @@ export function createRouterGuards(router, whiteNameList) {
 						next()
 					}
 				} else {
-					if (to.params['type']) {
-						// 路由参数 type 与当前 type 是否匹配
-						if (to.params['type'] === type) {
-							try {
-								// 根据当前路由 user 参数，请求获取用户信息
-								ownerStore.setOwner(to.params[namedRouteParam])
-
-								// 如果不访问用户主页，则不需获取用户信息
-								if (to.name === namedRouteName) {
-									await ownerStore.apiGetOwnerInfo()
-								}
-								next()
-							} catch (err) {
-								// console.log('[ err ] >', err)
-								next('/error')
-							}
-						} else {
-							next('/error')
-						}
-					} else {
-						next()
-					}
+					next()
 				}
 			}
 		} else {
@@ -83,7 +59,6 @@ export function createRouterGuards(router, whiteNameList) {
 	// }
 
 	router.afterEach((to, from, failure) => {
-		console.log(to, from)
 		if (to.fullPath === from.fullPath) return
 		// const keepAliveStore = useKeepAliveStore()
 		// const token = Storage.get(ACCESS_TOKEN_KEY, null)

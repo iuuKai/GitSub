@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-11-30 08:07:33
  * @LastEditors: iuukai
- * @LastEditTime: 2023-03-12 16:20:59
+ * @LastEditTime: 2023-04-21 00:34:03
  * @FilePath: \gitsub\src\store\modules\repo.js
  * @Description:
  * @QQ/微信: 790331286
@@ -16,20 +16,24 @@ import {
 	getRepoBlobs,
 	getRepoContributorList,
 	getRepoCollaboratorList,
-	getRepoPathContentList,
+	getRepoPathContents,
+	getRepoLanguageList,
 	getRepoReadme,
 	getRepoBrancheList,
 	getRepoTagList,
 	getRepoCommit,
 	getRepoCommitList,
 	getRepoNetworksEventList,
-	getRepoDownloadZIP
+	getRepoDownloadZIP,
+	getRepoLatestReleases
 } from '@/api/repo'
 
 export const useRepoStore = defineStore({
 	id: 'repo',
 	state: () => ({
-		details: {}
+		details: {},
+		contents: null,
+		mdContent: ''
 	}),
 	getters: {
 		accountStore() {
@@ -38,13 +42,28 @@ export const useRepoStore = defineStore({
 		ownerStore() {
 			return useOwnerStore()
 		},
+		getRepoName() {
+			return this.details?.name
+		},
+		getMdContent() {
+			return this.mdContent
+		},
 		getDetails() {
 			return this.details
+		},
+		getContents() {
+			return this.contents
 		}
 	},
 	actions: {
+		setMdContent(_md) {
+			this.mdContent = _md
+		},
 		setDetails(_details) {
 			this.details = _details
+		},
+		setContents(_contents) {
+			this.contents = _contents
 		},
 		// 获取仓库详情
 		apiGetRepo(params) {
@@ -66,9 +85,13 @@ export const useRepoStore = defineStore({
 		apiGetRepoCollaboratorList(params) {
 			return getRepoCollaboratorList(params)
 		},
+		// 获取仓库语言列表
+		apiGetRepoLanguageList(params) {
+			return getRepoLanguageList(params)
+		},
 		// 获取仓库具体路径下的内容
-		apiGetRepoPathContentList(params) {
-			return getRepoPathContentList(params)
+		apiGetRepoPathContents(params) {
+			return getRepoPathContents(params)
 		},
 		// 获取仓库README
 		apiGetRepoReadme(params) {
@@ -97,6 +120,10 @@ export const useRepoStore = defineStore({
 		// 下载仓库 zip
 		apiGetRepoDownloadZIP(params) {
 			return getRepoDownloadZIP(params)
+		},
+		// 获取仓库最新发行版
+		apiGetRepoLatestReleases(params) {
+			return getRepoLatestReleases(params)
 		}
 	}
 })

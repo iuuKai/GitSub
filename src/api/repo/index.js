@@ -2,13 +2,12 @@
  * @Author: iuukai
  * @Date: 2023-01-01 13:07:26
  * @LastEditors: iuukai
- * @LastEditTime: 2023-03-12 16:20:20
+ * @LastEditTime: 2023-04-11 11:00:43
  * @FilePath: \gitsub\src\api\repo\index.js
  * @Description:
  * @QQ/微信: 790331286
  */
 import { request } from '@/utils/request'
-import { isPlainObject } from 'lodash-es'
 
 // 获取用户的某个仓库
 export function getRepo(params = {}) {
@@ -33,18 +32,25 @@ export function getRepoNetworksEventList(params = {}) {
 }
 
 // 获取仓库具体路径下的内容
-export function getRepoPathContentList(params = {}) {
+export function getRepoPathContents(params = {}) {
 	const { owner, repo, path } = params
 	const url = `/repos/${owner}/${repo}/contents${path ? `/${path}` : ''}`
 	return request({
 		url,
 		method: 'get',
 		params
-	}).then(res => {
-		const data = isPlainObject(res.data) ? [res.data] : res.data
-		// 排序
-		return data.sort((a, b) => a.type.localeCompare(b.type))
-	})
+	}).then(res => res.data)
+}
+
+// 获取仓库语言列表
+export function getRepoLanguageList(params = {}) {
+	const { owner, repo } = params
+	const url = `/repos/${owner}/${repo}/languages`
+	return request({
+		url,
+		method: 'get',
+		params
+	}).then(res => res.data)
 }
 
 // 获取仓库目录Tree
@@ -149,6 +155,17 @@ export function getRepoCommit(params = {}) {
 export function getRepoDownloadZIP(params = {}) {
 	const { owner, repo, sha } = params
 	const url = `/repos/${owner}/${repo}/zipball/${sha}`
+	return request({
+		url,
+		method: 'get',
+		params
+	}).then(res => res.data)
+}
+
+// 获取仓库最新的发行版
+export function getRepoLatestReleases(params = {}) {
+	const { owner, repo } = params
+	const url = `/repos/${owner}/${repo}/releases/latest`
 	return request({
 		url,
 		method: 'get',

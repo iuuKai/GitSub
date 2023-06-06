@@ -1,5 +1,15 @@
 {
 	"compilerOptions": {
-		"allowJs": true
+		// "baseUrl": ".",
+		"module": "esnext",
+		"target": "esnext",
+		"moduleResolution": "node",
+		// "lib": ["dom", "esnext"],
+		"allowJs": true,
+		"types": ["vite/client"]
+		// "paths": {
+		// 	"@/*": ["src/*"]
+		// }
 	}
+	// "exclude": ["node_modules"]
 }
