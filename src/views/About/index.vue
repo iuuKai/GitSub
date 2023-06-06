@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-12-05 12:19:32
  * @LastEditors: iuukai
- * @LastEditTime: 2023-05-12 16:39:16
+ * @LastEditTime: 2023-06-06 23:44:46
  * @FilePath: \gitsub\src\views\About\index.vue
  * @Description: 
  * @QQ/微信: 790331286
@@ -43,7 +43,8 @@ const userage = computed(() => domStore.user.age)
 
 const state = reactive({
 	demo: {
-		name: '张三'
+		name: '张三',
+		age: 18
 	}
 })
 
