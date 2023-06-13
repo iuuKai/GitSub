@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-03-29 12:40:31
  * @LastEditors: iuukai
- * @LastEditTime: 2023-06-13 12:00:13
+ * @LastEditTime: 2023-06-09 11:30:36
  * @FilePath: \gitsub\src\views\Repo\pages\Content.vue
  * @Description: 
  * @QQ/微信: 790331286
@@ -13,30 +13,11 @@
 			<a-col :span="isPortal ? 18 : 24">
 				<div v-if="treeList && treeList.length" class="file-list_container">
 					<Gradients type="border" />
-					<a-card :bodyStyle="{ padding: 0 }">
-						<template #title>
-							<!-- <div>{{ curPathCommit }}</div> -->
-							<template v-if="curPathCommit">
-								<a-space :style="{ fontSize: '14px' }">
-									<a-avatar :src="curPathCommit.author.avatar_url" size="small">
-										<template #icon><UserOutlined /></template>
-									</a-avatar>
-									<a>{{ curPathCommit.author.login }}</a>
-									<a-typography-link
-										type="secondary"
-										ellipsis
-										:title="curPathCommit.commit.message"
-										:content="curPathCommit.commit.message.match(/^[^\n]*/)?.[0]"
-									></a-typography-link>
-								</a-space>
-							</template>
-						</template>
-						<FileList
-							:list="treeList"
-							@file-click="handleClickFile"
-							@download-click="handleClickDownload"
-						/>
-					</a-card>
+					<FileList
+						:list="treeList"
+						@file-click="handleClickFile"
+						@download-click="handleClickDownload"
+					/>
 				</div>
 				<div v-if="fileContents" ref="mdCardRef" class="md_card_container">
 					<Gradients type="border" />
@@ -129,7 +110,7 @@ import { MarkDownPreview } from '@/components/basic/markdown'
 import { FileList } from '../components'
 import { Modal } from 'ant-design-vue'
 import { message as $message } from 'ant-design-vue'
-import { FileTextOutlined, ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons-vue'
+import { FileTextOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue'
 
 import { h, defineComponent, reactive, toRefs, computed, ref, unref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -159,7 +140,11 @@ export default defineComponent({
 		// 非响应数据
 		const repoDetails = repoStore.getDetails
 		const blobData = isPlainObject(repoStore.getContents) ? repoStore.getContents : {}
-		// const treeList = isArray(repoStore.getContents) ? repoStore.getContents : []
+		const treeList = isArray(repoStore.getContents) ? repoStore.getContents : []
+		// readme
+		const isHasReadme = treeList.findIndex(item => /^readme(?!\w)/.test(toLower(item.name))) > -1
+		// 许可
+		const isHasLicense = treeList.findIndex(item => /^license(?!\w)/.test(toLower(item.name))) > -1
 
 		const state = reactive({
 			isPortal: computed(() => {
@@ -167,9 +152,7 @@ export default defineComponent({
 				return !path || !path.length
 			}),
 			isDark: computed(() => themeStore.getTheme === 'dark'),
-			curPathCommit: repoStore.getCurPathCommit,
 			targetScroll: computed(() => () => domStore.getScrollContainer),
-			treeList: isArray(repoStore.getContents) ? repoStore.getContents : [],
 			eventList: [],
 			contributorList: [],
 			commitList: [],
@@ -183,12 +166,6 @@ export default defineComponent({
 		const mdRef = ref(null)
 		const { isFullscreen, toggle: handleFullScreenToogle } = useFullscreen(mdContainerRef)
 
-		// readme
-		const isHasReadme =
-			state.treeList.findIndex(item => /^readme(?!\w)/.test(toLower(item.name))) > -1
-		// 许可
-		const isHasLicense =
-			state.treeList.findIndex(item => /^license(?!\w)/.test(toLower(item.name))) > -1
 		// const demo = computed(() => domStore.getScrollContainer)
 		// const { y: scrollY } = useScroll(demo, { behavior: 'smooth' })
 		// watch(scrollY, val => {
@@ -254,8 +231,7 @@ export default defineComponent({
 				const { owner, repo } = route.params
 				const params = { owner, repo }
 				const portalRequestList = state.isPortal ? getPromiseList(params) : []
-				const list = [getFileContent(params), getCommitList(params), ...portalRequestList]
-
+				const list = [getFileContent(params), ...getCommitList(params), ...portalRequestList]
 				const responseList = await Promise.all(list)
 				const errorList = responseList.filter(Boolean)
 
@@ -285,22 +261,26 @@ export default defineComponent({
 		}
 
 		// 仓库 commit
-		async function getCommitList({ owner, repo }) {
+		function getCommitList({ owner, repo }) {
 			try {
-				const promiseList = state.treeList.map(async (item, i) => {
-					const { path } = item
+				const promiseList = treeList.map(async ({ path }) => {
 					const [commit] = await repoStore.apiGetRepoCommitList({
 						owner,
 						repo,
 						path,
 						per_page: '1'
 					})
-					return {
-						...item,
-						demo: commit
-					}
+					// return commit
+					console.log(commit)
 				})
-				state.treeList = await Promise.all(promiseList)
+				console.log(promiseList, 123)
+				return promiseList
+				// const commits = (await Promise.all(promiseList)).flat()
+				// console.log(
+				// 	'%c [ commits ]-266',
+				// 	'font-size:13px; background:pink; color:#bf2c9f;',
+				// 	commits
+				// )
 			} catch (err) {
 				return Promise.resolve({ name: 'apiGetRepoCommitList', err })
 			}
@@ -446,7 +426,7 @@ export default defineComponent({
 			isHasLicense,
 			repoDetails,
 			blobData,
-			// treeList,
+			treeList,
 			handleClickFile,
 			handleClickDownload,
 			handleClickCopy,
@@ -459,7 +439,6 @@ export default defineComponent({
 	components: {
 		FileTextOutlined,
 		MarkDownPreview,
-		UserOutlined,
 		FileList
 	}
 })
@@ -467,7 +446,6 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .file-list_container {
-  @apply mb-10px;
+	@apply mb-10px;
 }
-
 </style>

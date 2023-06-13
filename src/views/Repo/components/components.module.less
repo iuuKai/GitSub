@@ -17,9 +17,13 @@
  * file-list
  */
 .list_row {
-  @apply hover:(bg-blue-100 dark:bg-dark-500);
+  @apply hover:(bg-blue-100 dark:bg-dark-300);
 
   .icon-blank {
     @apply inline-block w-4 h-4;
+  }
+
+  :global(.ant-list-item-meta-title) {
+    @apply mb-0;
   }
 }

@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-11-30 08:07:33
  * @LastEditors: iuukai
- * @LastEditTime: 2023-04-21 00:34:03
+ * @LastEditTime: 2023-06-13 09:29:50
  * @FilePath: \gitsub\src\store\modules\repo.js
  * @Description:
  * @QQ/微信: 790331286
@@ -31,9 +31,11 @@ import {
 export const useRepoStore = defineStore({
 	id: 'repo',
 	state: () => ({
+		path: '',
 		details: {},
 		contents: null,
-		mdContent: ''
+		mdContent: '',
+		curPathCommit: null
 	}),
 	getters: {
 		accountStore() {
@@ -42,28 +44,40 @@ export const useRepoStore = defineStore({
 		ownerStore() {
 			return useOwnerStore()
 		},
+		getPath() {
+			return this.path
+		},
 		getRepoName() {
 			return this.details?.name
-		},
-		getMdContent() {
-			return this.mdContent
 		},
 		getDetails() {
 			return this.details
 		},
 		getContents() {
 			return this.contents
+		},
+		getMdContent() {
+			return this.mdContent
+		},
+		getCurPathCommit() {
+			return this.curPathCommit
 		}
 	},
 	actions: {
-		setMdContent(_md) {
-			this.mdContent = _md
+		setPath(_path) {
+			this.path = _path
 		},
 		setDetails(_details) {
 			this.details = _details
 		},
 		setContents(_contents) {
 			this.contents = _contents
+		},
+		setMdContent(_md) {
+			this.mdContent = _md
+		},
+		setCurPathCommit(_commit) {
+			this.curPathCommit = _commit
 		},
 		// 获取仓库详情
 		apiGetRepo(params) {

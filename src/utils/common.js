@@ -27,7 +27,7 @@ export function byteConvert(bytes) {
 	if (bytes.toString().length > bytes.toFixed(2).toString().length) {
 		bytes = bytes.toFixed(2)
 	}
-	return `${bytes} ${symbols[i]}`
+	return `${bytes / 1} ${symbols[i]}`
 }
 
 const htmlTags = [
