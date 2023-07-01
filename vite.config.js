@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-10-21 00:44:41
  * @LastEditors: iuukai
- * @LastEditTime: 2023-04-25 16:58:30
+ * @LastEditTime: 2023-06-24 17:06:57
  * @FilePath: \gitsub\vite.config.js
  * @Description:
  * @QQ/微信: 790331286
@@ -168,6 +168,8 @@ export default defineConfig(({ mode }) => ({
 					var: 'antd',
 					path: 'https://cdn.jsdelivr.net/npm/ant-design-vue@3.2.13/dist/antd.min.js',
 					css: [
+						// 'https://cdn.bootcdn.net/ajax/libs/ant-design-vue/3.2.17/antd.min.css',
+						// 'https://cdn.bootcdn.net/ajax/libs/ant-design-vue/3.2.17/antd.dark.min.css'
 						'https://cdn.jsdelivr.net/npm/ant-design-vue@3.2.13/dist/antd.min.css',
 						'https://cdn.jsdelivr.net/npm/ant-design-vue@3.2.13/dist/antd.dark.min.css'
 					]

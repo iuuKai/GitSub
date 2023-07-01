@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-10-21 08:11:00
  * @LastEditors: iuukai
- * @LastEditTime: 2023-05-14 01:22:12
+ * @LastEditTime: 2023-06-27 06:50:30
  * @FilePath: \gitsub\windi.config.js
  * @Description:
  * @QQ/微信: 790331286
@@ -41,7 +41,16 @@ export default defineConfig({
 				// 	'0%': { backgroundPosition: '0 0' },
 				// 	'100%': { backgroundPosition: '-100% 0' }
 				// }
-			}
+			},
+			typography: theme => ({
+				DEFAULT: {
+					css: {
+						img: {
+							height: null
+						}
+					}
+				}
+			})
 		},
 		cursor: {
 			...baseConfig.theme.cursor,

@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-03-29 12:40:31
  * @LastEditors: iuukai
- * @LastEditTime: 2023-06-13 12:00:13
+ * @LastEditTime: 2023-07-01 13:59:46
  * @FilePath: \gitsub\src\views\Repo\pages\Content.vue
  * @Description: 
  * @QQ/微信: 790331286
@@ -15,20 +15,68 @@
 					<Gradients type="border" />
 					<a-card :bodyStyle="{ padding: 0 }">
 						<template #title>
-							<!-- <div>{{ curPathCommit }}</div> -->
 							<template v-if="curPathCommit">
-								<a-space :style="{ fontSize: '14px' }">
-									<a-avatar :src="curPathCommit.author.avatar_url" size="small">
-										<template #icon><UserOutlined /></template>
-									</a-avatar>
-									<a>{{ curPathCommit.author.login }}</a>
-									<a-typography-link
-										type="secondary"
-										ellipsis
-										:title="curPathCommit.commit.message"
-										:content="curPathCommit.commit.message.match(/^[^\n]*/)?.[0]"
-									></a-typography-link>
-								</a-space>
+								<a-row align="middle" :style="{ fontSize: '14px' }">
+									<a-col>
+										<a-avatar :src="curPathCommit.author?.avatar_url" size="small">
+											<template #icon><UserOutlined /></template>
+										</a-avatar>
+									</a-col>
+									<!-- 溢出会换行 -->
+									<a-col flex="1" :style="{ marginLeft: '12px' }">
+										<a-row>
+											<a-col>
+												<a-space>
+													<a>
+														{{ curPathCommit.author?.login || curPathCommit.commit.author.name }}
+													</a>
+													<a-typography-link
+														type="secondary"
+														ellipsis
+														:title="curPathCommit.commit.message"
+														:content="curPathCommit.commit.message.match(/^[^\n]*/)?.[0]"
+													></a-typography-link>
+												</a-space>
+											</a-col>
+											<a-col
+												flex="1"
+												:style="{ display: 'flex', marginLeft: '16px', justifyContent: 'flex-end' }"
+											>
+												<a-space>
+													<a-typography-link
+														type="secondary"
+														ellipsis
+														:title="curPathCommit.sha"
+														:content="curPathCommit.sha.substring(0, 7)"
+													/>
+													<a-typography-text
+														type="secondary"
+														:title="
+															dayjs(curPathCommit.commit.author.date).format(
+																'MMM D, YYYY[, ]h:mm A [GMT]ZZ'
+															)
+														"
+													>
+														{{ dayjs(curPathCommit.commit.author.date).from() }}
+													</a-typography-text>
+												</a-space>
+											</a-col>
+										</a-row>
+									</a-col>
+									<a-col :style="{ marginLeft: '16px' }">
+										<a>
+											<a-space :size="4">
+												<HistoryOutlined :style="{ fontSize: '16px' }" />
+												<span>
+													<template v-if="curPathCommit.total">
+														{{ curPathCommit.total }} commits
+													</template>
+													<template v-else>History</template>
+												</span>
+											</a-space>
+										</a>
+									</a-col>
+								</a-row>
 							</template>
 						</template>
 						<FileList
@@ -69,13 +117,14 @@
 				</div>
 			</a-col>
 			<a-col :span="isPortal ? 6 : 0">
-				<div v-if="repoDetails" :style="{ position: 'sticky', top: '80px' }">
+				<RepoProfile />
+				<!-- <div v-if="repoDetails" :style="{ position: 'sticky', top: '80px' }">
 					<Gradients type="border" />
 					<a-card :bodyStyle="{ padding: '15px' }">
 						<a-typography-title :level="3">简介</a-typography-title>
-						<div v-if="repoDetails.description">
+						<div>
 							<a-typography-text type="secondary">
-								{{ repoDetails.description }}
+								{{ repoDetails.description || 'No description, website, or topics provided.' }}
 							</a-typography-text>
 						</div>
 						<div v-if="repoDetails.homepage">
@@ -89,7 +138,6 @@
 							</a-tag>
 						</div>
 						<div v-if="isHasReadme" @click="handleScrollTo">Readme</div>
-						<div v-if="repoDetails.size">Size: {{ repoDetails.size }}</div>
 						<div v-if="repoDetails.license && isHasLicense">License</div>
 						<div>Stars: {{ repoDetails.stargazers_count }}</div>
 						<div>Watching: {{ repoDetails.subscribers_count }}</div>
@@ -108,12 +156,24 @@
 						<a-empty v-else />
 						<a-divider />
 						<a-typography-title :level="3">贡献者</a-typography-title>
+						<a-avatar-group :max-count="10">
+							<a-tooltip
+								v-for="item in contributorList"
+								:key="item.id"
+								:title="item.login"
+								placement="top"
+							>
+								<a-avatar :src="item.avatar_url">
+									<template #icon><UserOutlined /></template>
+								</a-avatar>
+							</a-tooltip>
+						</a-avatar-group>
 						<a-divider />
 						<a-typography-title :level="3">近期动态</a-typography-title>
 						<a-divider />
 						<a-typography-title :level="3">语言</a-typography-title>
 					</a-card>
-				</div>
+				</div> -->
 			</a-col>
 		</a-row>
 		<!-- <iframe
@@ -126,10 +186,15 @@
 
 <script>
 import { MarkDownPreview } from '@/components/basic/markdown'
-import { FileList } from '../components'
+import { FileList, RepoProfile } from '../components'
 import { Modal } from 'ant-design-vue'
 import { message as $message } from 'ant-design-vue'
-import { FileTextOutlined, ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons-vue'
+import {
+	FileTextOutlined,
+	ExclamationCircleOutlined,
+	UserOutlined,
+	HistoryOutlined
+} from '@ant-design/icons-vue'
 
 import { h, defineComponent, reactive, toRefs, computed, ref, unref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -144,9 +209,10 @@ import { useDomStore } from '@/store/modules/dom'
 import { useRepoStore } from '@/store/modules/repo'
 import { useThemeStore } from '@/store/modules/theme'
 import { Base64 } from '@/utils/crypto'
-import { toLower, isArray, isPlainObject } from 'lodash-es'
+import { toLower, isArray, isPlainObject, isEmpty } from 'lodash-es'
 import { fileDownload } from '@/utils/file-download'
 import scrollTo from '../../../components/basic/markdown/hooks/scrollTo'
+import { useDayjs } from '@/hooks/useDayjs'
 
 export default defineComponent({
 	setup() {
@@ -155,6 +221,7 @@ export default defineComponent({
 		const domStore = useDomStore()
 		const repoStore = useRepoStore()
 		const themeStore = useThemeStore()
+		const dayjs = useDayjs()
 
 		// 非响应数据
 		const repoDetails = repoStore.getDetails
@@ -185,7 +252,8 @@ export default defineComponent({
 
 		// readme
 		const isHasReadme =
-			state.treeList.findIndex(item => /^readme(?!\w)/.test(toLower(item.name))) > -1
+			state.treeList.findIndex(item => /^readme(?!\w)/.test(toLower(item.name))) > -1 &&
+			isEmpty(route.params.path)
 		// 许可
 		const isHasLicense =
 			state.treeList.findIndex(item => /^license(?!\w)/.test(toLower(item.name))) > -1
@@ -208,7 +276,6 @@ export default defineComponent({
 			() => state.fileContents,
 			content => {
 				repoStore.setMdContent(content)
-				// localStorage.setItem('demo', content)
 			}
 		)
 
@@ -253,8 +320,8 @@ export default defineComponent({
 			try {
 				const { owner, repo } = route.params
 				const params = { owner, repo }
-				const portalRequestList = state.isPortal ? getPromiseList(params) : []
-				const list = [getFileContent(params), getCommitList(params), ...portalRequestList]
+				// const portalRequestList = state.isPortal ? getPromiseList(params) : []
+				const list = [getFileContent(params), getCommitList(params)]
 
 				const responseList = await Promise.all(list)
 				const errorList = responseList.filter(Boolean)
@@ -309,15 +376,22 @@ export default defineComponent({
 		// 其他主页数据
 		function getPromiseList(_params = {}) {
 			const list = [
-				{ model: 'eventList', bindAction: 'apiGetRepoNetworksEventList' },
-				{
-					model: 'contributorList',
-					bindAction: 'apiGetRepoContributorList',
-					bindParams: { type: 'authors', page: 1, per_page: 20 }
-				},
-				// { model: 'commitList', bindAction: 'apiGetRepoCommitList', },
-				{ model: 'tagList', bindAction: 'apiGetRepoTagList' },
-				{ model: 'latestReleases', bindAction: 'apiGetRepoLatestReleases' }
+				// { model: 'eventList', bindAction: 'apiGetRepoEventList' },
+				// {
+				// 	model: 'contributorList',
+				// 	bindAction: 'apiGetRepoContributorList',
+				// 	// authors | committers
+				// 	bindParams: { type: 'authors', page: 1, per_page: 10 }
+				// },
+				// {
+				// 	model: 'tagList',
+				// 	bindAction: 'apiGetRepoTagList',
+				// 	bindParams: {
+				// 		page: 1,
+				// 		per_page: 1
+				// 	}
+				// },
+				// { model: 'latestReleases', bindAction: 'apiGetRepoLatestReleases' }
 			]
 			return list
 				.map(item => async () => {
@@ -375,12 +449,14 @@ export default defineComponent({
 
 		function handleClickCopy(copy) {
 			$message.success('复制成功')
-			// $message.destroy()
 		}
 
 		// md 链接
-		function handleClickLink(url) {
-			if (!url || /^\/?#/.test(url)) return
+		function handleClickLink(link) {
+			// 无链接或者锚点
+			if (!link || /^\/?#/.test(link)) return
+
+			const url = decodeURIComponent(link)
 			if (/^\.\.\/|^\.\//.test(url) && !isFullscreen.value) {
 				const { path } = route.params
 				const { default_branch: branch } = repoStore.getDetails
@@ -453,21 +529,23 @@ export default defineComponent({
 			handleClickLink,
 			handleClickEdit,
 			handleScrollTo,
-			handleFullScreenToogle
+			handleFullScreenToogle,
+			dayjs
 		}
 	},
 	components: {
 		FileTextOutlined,
 		MarkDownPreview,
 		UserOutlined,
-		FileList
+		HistoryOutlined,
+		FileList,
+		RepoProfile
 	}
 })
 </script>
 
 <style lang="less" scoped>
 .file-list_container {
-  @apply mb-10px;
+	@apply mb-10px;
 }
-
 </style>

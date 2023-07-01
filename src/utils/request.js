@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-10-24 09:46:45
  * @LastEditors: iuukai
- * @LastEditTime: 2023-04-07 14:16:31
+ * @LastEditTime: 2023-06-18 05:35:05
  * @FilePath: \gitsub\src\utils\request.js
  * @Description:
  * @QQ/微信: 790331286
@@ -30,7 +30,8 @@ request.interceptors.request.use(
 		const type = accountStore.getType
 		const token = accountStore.getToken
 		token && (config.headers['Authorization'] = token)
-		type && !/^http/.test(config.url) && (config.url = type + config.url)
+		type && !/^(http|\/bing)/.test(config.url) && (config.url = type + config.url)
+
 		return config
 	},
 	error => {

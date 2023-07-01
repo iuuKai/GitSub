@@ -98,11 +98,14 @@
       }
     }
 
+    /**
+     * 图片底边距后期再处理
+     */
     img {
-      @apply inline-block max-w-full h-auto;
+      @apply inline-block;
 
       &:not(:last-child) {
-        @apply mt-0 mb-4;
+        // @apply mt-0 mb-4;
       }
     }
 
@@ -158,6 +161,10 @@
       thead tr,
       tbody tr:nth-child(2n) {
         @apply bg-gray-100 dark:bg-dark-600;
+      }
+
+      td > :last-child {
+        @apply mb-0;
       }
     }
 

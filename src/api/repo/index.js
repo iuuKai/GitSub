@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-01-01 13:07:26
  * @LastEditors: iuukai
- * @LastEditTime: 2023-04-11 11:00:43
+ * @LastEditTime: 2023-06-30 07:20:46
  * @FilePath: \gitsub\src\api\repo\index.js
  * @Description:
  * @QQ/微信: 790331286
@@ -31,6 +31,17 @@ export function getRepoNetworksEventList(params = {}) {
 	}).then(res => res.data)
 }
 
+// 获取仓库所有动态
+export function getRepoEventList(params = {}) {
+	const { owner, repo } = params
+	const url = `/repos/${owner}/${repo}/events`
+	return request({
+		url,
+		method: 'get',
+		params
+	}).then(res => res.data)
+}
+
 // 获取仓库具体路径下的内容
 export function getRepoPathContents(params = {}) {
 	const { owner, repo, path } = params
@@ -42,7 +53,7 @@ export function getRepoPathContents(params = {}) {
 	}).then(res => res.data)
 }
 
-// 获取仓库语言列表
+// 获取仓库语言列表(gitee 没有)
 export function getRepoLanguageList(params = {}) {
 	const { owner, repo } = params
 	const url = `/repos/${owner}/${repo}/languages`
@@ -125,19 +136,20 @@ export function getRepoTagList(params = {}) {
 	const url = `/repos/${owner}/${repo}/tags`
 	return request({
 		url,
-		method: 'get'
+		method: 'get',
+		params
 	}).then(res => res.data)
 }
 
 // 获取仓库所有提交
-export function getRepoCommitList(params = {}) {
+export function getRepoCommitList(params = {}, isAll = false) {
 	const { owner, repo } = params
 	const url = `/repos/${owner}/${repo}/commits`
 	return request({
 		url,
 		method: 'get',
 		params
-	}).then(res => res.data)
+	}).then(res => (isAll ? res : res.data))
 }
 
 // 获取仓库某个提交
@@ -160,6 +172,17 @@ export function getRepoDownloadZIP(params = {}) {
 		method: 'get',
 		params
 	}).then(res => res.data)
+}
+
+// 获取仓库所有发行版
+export function getRepoReleases(params = {}, isAll = false) {
+	const { owner, repo } = params
+	const url = `/repos/${owner}/${repo}/releases`
+	return request({
+		url,
+		method: 'get',
+		params
+	}).then(res => (isAll ? res : res.data))
 }
 
 // 获取仓库最新的发行版

@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-05-16 22:07:52
  * @LastEditors: iuukai
- * @LastEditTime: 2023-05-17 04:23:29
+ * @LastEditTime: 2023-07-01 13:48:34
  * @FilePath: \gitsub\src\components\basic\markdown\hooks\useFlatToTree.js
  * @Description:
  * @QQ/微信: 790331286
@@ -113,7 +113,6 @@ function loopPush(tree, raw, mark, config = {}) {
 
 				if (p) {
 					// 找到的映射项，则把其 deep 层级，作为 targetDeep，初始 curDeep，开始递归
-
 					mark.targetDeep = p.deep
 					mark.curDeep = 0
 					return loopPush(tree, childObj, mark, config)
@@ -137,6 +136,7 @@ function loopPush(tree, raw, mark, config = {}) {
 					// 递归
 					return loopPush(tree, raw, mark, config)
 				} else {
+					mark.parentObj = childObj
 					tree.push(childObj)
 				}
 			}

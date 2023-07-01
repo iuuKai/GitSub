@@ -56,7 +56,13 @@ const handleLoad = e => {
 
 // 获取图片地址
 getFullBanner().then(res => {
-	state.imgURL = res.url
+	const {
+		images: [{ copyrightlink, url }]
+	} = res
+	const reg = /(http|https):\/\/([^/\r\n]+)(\/[^\r\n]*)?/
+	const match = reg.exec(copyrightlink)
+	const host = match ? `${match[1]}://${match[2]}` : ''
+	state.imgURL = host + url
 })
 </script>
 

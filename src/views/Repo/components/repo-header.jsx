@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-03-04 15:18:39
  * @LastEditors: iuukai
- * @LastEditTime: 2023-06-06 23:43:56
+ * @LastEditTime: 2023-06-25 07:24:27
  * @FilePath: \gitsub\src\views\Repo\components\repo-header.jsx
  * @Description:
  * @QQ/微信: 790331286
@@ -18,6 +18,8 @@ import {
 	DownOutlined,
 	UnlockOutlined
 } from '@ant-design/icons-vue'
+import { isArray } from 'lodash-es'
+import { useRoute } from 'vue-router'
 import style from './components.module.less'
 
 export default defineComponent({
@@ -25,12 +27,14 @@ export default defineComponent({
 	props: {},
 	emits: ['breadcrumb-click'],
 	setup(props, { emit }) {
+		const route = useRoute()
 		const state = reactive({
 			activeKey: 0,
 			tabs: [
 				{ label: 'Code', icon: ReadOutlined },
 				{ label: 'Issues', icon: HddOutlined },
-				{ label: 'Events', icon: StarOutlined }
+				{ label: 'Events', icon: StarOutlined },
+				{ label: 'Contributors', icon: UserOutlined }
 			]
 		})
 
@@ -41,15 +45,21 @@ export default defineComponent({
 			}
 		)
 
+		const { owner, repo, path } = route.params
+
 		const breadcrumb = [
 			{ breadcrumbName: '', icon: HomeOutlined },
 			{
-				breadcrumbName: 'iuukai',
+				breadcrumbName: owner,
 				icon: UserOutlined,
 				overlayList: [{ menu: '概况' }, { menu: '仓库' }, { menu: 'Stars' }]
 			},
-			{ breadcrumbName: 'markdown-render-test', icon: null }
-		]
+			{ breadcrumbName: repo, icon: null }
+		].concat(
+			(isArray(path) ? path : path.split('/')).filter(Boolean).map(v => ({
+				breadcrumbName: v
+			}))
+		)
 
 		return () => {
 			return (
@@ -59,13 +69,7 @@ export default defineComponent({
 						<a-page-header
 							style={{ padding: 0 }}
 							v-slots={{
-								// title: () => 'iuuKai / markdown-render-test',
-								title: () =>
-									h(Fragment, null, [
-										h('a', 'iuukai'),
-										h('span', ' / '),
-										h('a', 'markdown-render-test')
-									]),
+								title: () => h(Fragment, null, [h('a', owner), h('span', ' / '), h('a', repo)]),
 								subTitle: () => 'This is a subtitle',
 								breadcrumb: () => (
 									<a-breadcrumb>
@@ -73,6 +77,17 @@ export default defineComponent({
 											const isNotLast = i < breadcrumb.length - 1
 											return (
 												<a-breadcrumb-item
+													v-slots={
+														item.overlayList && {
+															overlay: () => (
+																<a-menu>
+																	{item.overlayList.map((over, index) => (
+																		<a-menu-item key={index}>{over.menu}</a-menu-item>
+																	))}
+																</a-menu>
+															)
+														}
+													}
 													onClick={() => isNotLast && emit('breadcrumb-click', item)}
 												>
 													{h(
@@ -106,7 +121,7 @@ export default defineComponent({
 												icon: () => <DownOutlined />
 											}}
 										>
-											Watch
+											Watch 300
 										</a-dropdown-button>
 										<a-dropdown-button
 											key="2"
@@ -121,7 +136,7 @@ export default defineComponent({
 												icon: () => <DownOutlined />
 											}}
 										>
-											Fork
+											Fork 100
 										</a-dropdown-button>
 										<a-dropdown-button
 											key="3"
@@ -136,7 +151,7 @@ export default defineComponent({
 												icon: () => <DownOutlined />
 											}}
 										>
-											Star
+											Star 150
 										</a-dropdown-button>
 									</a-space>
 								),

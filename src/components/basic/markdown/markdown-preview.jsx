@@ -114,6 +114,7 @@ export default defineComponent({
 			// 链接拦截
 			if (elParentName === 'a' || elName === 'a') {
 				const url = (elParentName === 'a' ? elParent : el).getAttribute('href')
+				console.log(123, (elParentName === 'a' ? elParent : el).getAttribute('href'))
 				emit('link-before', url)
 			}
 

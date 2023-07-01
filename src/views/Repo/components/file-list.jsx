@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-03-04 14:58:53
  * @LastEditors: iuukai
- * @LastEditTime: 2023-06-13 10:06:28
+ * @LastEditTime: 2023-06-20 00:31:47
  * @FilePath: \gitsub\src\views\Repo\components\file-list.jsx
  * @Description:
  * @QQ/微信: 790331286
@@ -30,7 +30,6 @@ export default defineComponent({
 
 		const sourceList = computed(() => {
 			const arr = props.list.map(item => ({ ...item }))
-			console.log(arr, 123)
 			const { path } = route.params
 
 			if (path && path.length) {
@@ -56,7 +55,7 @@ export default defineComponent({
 				const isGitee = toLower(type) === 'gitee'
 				const listItemSlots = {
 					actions: () => (
-						<div style={{ width: '100px', textAlign: 'right' }}>
+						<div style={{ width: '110px', textAlign: 'right' }}>
 							{item.demo && (
 								<a-typography-text
 									type="secondary"

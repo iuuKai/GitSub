@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-02-28 00:50:42
  * @LastEditors: iuukai
- * @LastEditTime: 2023-05-16 23:47:17
+ * @LastEditTime: 2023-07-01 14:11:59
  * @FilePath: \gitsub\src\components\basic\markdown\hooks\useMarked.js
  * @Description:
  * @QQ/微信: 790331286
@@ -181,7 +181,12 @@ const renderer = {
  * @returns
  */
 function getHtmlStr(value) {
+	const codeBlockList = []
 	const v = value
+		.replace(/```([\s\S]*?)```/g, match => {
+			codeBlockList.push(match)
+			return '%{codeblock}%'
+		})
 		// katex 渲染时，反斜杠不得转义，即 md 是 \\pm，那么就需要改为 \pm
 		.replace(/\\\\(\w+)/g, match => match.replace(/\\\\/g, '\\'))
 		.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/g, '')
@@ -241,13 +246,13 @@ function getHtmlStr(value) {
 				summary: [],
 				sub: [],
 				sup: [],
-				table: [],
+				table: ['align', 'cellpadding', 'cellspacing'],
 				tbody: [],
 				tfoot: [],
 				thead: [],
-				th: [],
 				tr: [],
-				td: [],
+				th: ['align', 'colspan', 'headers', 'rowspan', 'scope', 'valign'],
+				td: ['align', 'colspan', 'headers', 'rowspan', 'scope', 'valign'],
 				tt: [],
 				u: [],
 				ul: [],
@@ -285,18 +290,25 @@ function getHtmlStr(value) {
 					return match.replace(/</g, '&lt;').replace(/>/g, '&gt;')
 				})
 			}
-		}),
+		})
+			.split('%{codeblock}%')
+			.map(item => item + (codeBlockList.shift() || ''))
+			.join(''),
 		{
 			renderer: Object.assign(new Renderer(), renderer)
 		}
 	)
 
 	const idMark = {}
+	// console.log(str)
 	return value
-		? str.replace(/<h([1-6])([^>]*)>(.*?)<\/h\1>/gi, (match, level, attrs, text) => {
+		? str.replace(/<h([1-6])([^>]*)>((?:.|\n)*?)<\/h\1>/gi, (match, level, attrs, text) => {
+				// console.log(match, text)
 				const isHasId = /id="([^"]*)"/.exec(attrs)
+				const isTagText = /<(\w+)([^>]*)>(.*?)<\/\1>/.exec(text)
+				const content = isTagText ? isTagText[3] : text
 
-				let id = isHasId ? isHasId[1] : text
+				let id = isHasId ? isHasId[1] : content.toLowerCase().replace(/\s+/g, '-')
 				if (idMark[id]) {
 					idMark[id]++
 					id += '-' + (idMark[id] - 1)
@@ -306,15 +318,17 @@ function getHtmlStr(value) {
 
 				const emojiRegex = emojiRegexCreater()
 
-				// 内容过滤标签
-				const textNoTag = /^<(\w+)([^>]*)>/.test(text)
-					? text.match(/<(\w+)[^>]*>(.*?)<\/\1>/)[2].replace(/^\s*|\s*$/gi, '')
-					: text.replace(/<(\w+)([^>]*)>(.*?)<\/\1>/gi, '')
+				// 过滤图片标签
+				const textFilterImg = content.replace(/(<img[^>]*\/?>)/gi, '')
+				// 过滤其他标签多余标签
+				const textNoTag = /^<(\w+)([^>]*)>/.test(textFilterImg)
+					? textFilterImg.match(/<(\w+)[^>]*>(.*?)<\/\1>/)[2].replace(/^\s*|\s*$/gi, '')
+					: textFilterImg.replace(/<(\w+)([^>]*)>(.*?)<\/\1>/gi, '')
 
 				// id过滤表情
 				const idNoEmoji = id
 					? id.replace(emojiRegex, '').replace(/^[\s-]*|[\s-]*$/gi, '')
-					: text.toLowerCase().replace(/\s+/g, '-')
+					: content.toLowerCase().replace(/\s+/g, '-')
 				// 属性过滤id
 				const attrsNoId = attrs.replace(/id="[^"]*"|^\s*|\s*$/gi, '')
 

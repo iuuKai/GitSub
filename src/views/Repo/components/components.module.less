@@ -16,6 +16,10 @@
 /*
  * file-list
  */
+:global(.ant-card-head) {
+  @apply px-4;
+}
+
 .list_row {
   @apply hover:(bg-blue-100 dark:bg-dark-300);
 
@@ -25,5 +29,41 @@
 
   :global(.ant-list-item-meta-title) {
     @apply mb-0;
+  }
+
+  :global(.ant-list-item-action) {
+    @apply ml-2;
+
+    li {
+      @apply pr-0;
+    }
+  }
+}
+
+/**
+ * repo-profile
+ */
+.repo-profile {
+  @apply sticky;
+
+  .progress {
+    @apply flex mb-2 h-2 bg-gray-500 bg-opacity-40 rounded-md overflow-hidden;
+    // outline: '1px solid #0000',
+
+    .progress-item {
+      // outline: '2px solid #0000'
+    }
+  }
+
+  :global(.ant-badge) {
+    @apply mr-4;
+
+    :global(.ant-badge-status-dot) {
+      @apply w-2 h-2;
+    }
+
+    :global(.ant-badge-status-text) {
+      @apply text-xs;
+    }
   }
 }
