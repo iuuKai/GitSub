@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-05-17 03:46:08
  * @LastEditors: iuukai
- * @LastEditTime: 2023-05-25 00:01:51
+ * @LastEditTime: 2023-07-03 11:46:33
  * @FilePath: \gitsub\src\views\Repo\pages\Edit.vue
  * @Description: 
  * @QQ/微信: 790331286
@@ -25,8 +25,8 @@
 					:style="isFullscreen ? null : { overflow: 'unset' }"
 				>
 					<div ref="mdRef" :style="{ fontSize: 0 }">
-						<MarkDownEditor :value="fileContents" :isDark="isDark" :config="config" />
-						<!-- <Codemirror v-model="fileContents" :isDark="isDark" /> -->
+						<!-- <MarkDownEditor :value="fileContents" :isDark="isDark" :config="config" /> -->
+						<Codemirror v-model="fileContents" :isDark="isDark" />
 					</div>
 					<!-- <MarkDownPreview
 						ref="mdRef"
@@ -59,6 +59,9 @@
 </template>
 
 <script setup>
+/**
+ * 需要判断，如果是文件夹或者空 path，则 404
+ */
 import { MarkDownPreview, MarkDownEditor, Codemirror } from '@/components/basic/markdown'
 import { FileList } from '../components'
 import { Modal } from 'ant-design-vue'
@@ -92,7 +95,10 @@ const themeStore = useThemeStore()
 const state = reactive({
 	isDark: computed(() => themeStore.getTheme === 'dark'),
 	title: '',
-	fileContents: ''
+	fileContents: computed({
+		get: () => repoStore.textContent,
+		set: val => repoStore.setTextContent(val)
+	})
 })
 const { isDark, title, fileContents } = toRefs(state)
 const contentRef = ref(null)
@@ -128,9 +134,10 @@ onMounted(() => {
 	//   })
 })
 
-getFileContent()
+// getFileContent()
 async function getFileContent() {
 	try {
+		console.log(route.params)
 		const { name, content } = await repoStore.apiGetRepoPathContents(route.params)
 		state.title = name
 		state.fileContents = Base64.dec(content)

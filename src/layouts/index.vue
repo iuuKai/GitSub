@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-10-21 06:35:12
  * @LastEditors: iuukai
- * @LastEditTime: 2023-04-22 05:53:06
+ * @LastEditTime: 2023-07-03 10:26:36
  * @FilePath: \gitsub\src\layouts\index.vue
  * @Description: 
  * @QQ/微信: 790331286
@@ -17,11 +17,11 @@
 			</Affix>
 			<router-view class="content-view" v-slot="{ Component }">
 				<transition name="fade-page" mode="out-in" appear>
-					<component :is="Component" :key="route.path" />
+					<component :is="Component" :key="path" />
 				</transition>
 			</router-view>
 			<transition name="fade-page" mode="out-in" appear>
-				<PageFooter :key="route.path" />
+				<PageFooter :key="path" />
 			</transition>
 		</Layout.Content>
 		<BackTop :target="targetScroll" />
@@ -33,7 +33,7 @@ import { Layout, Affix, BackTop } from 'ant-design-vue'
 import PageHeader from './header/index.vue'
 import PageFooter from './footer/index.vue'
 
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { unrefElement, useScroll, useDebounceFn } from '@vueuse/core'
 import { useDomStore } from '@/store/modules/dom'
@@ -42,6 +42,7 @@ const route = useRoute()
 const domStore = useDomStore()
 const headerRef = ref(null)
 const containerRef = ref(null)
+const path = computed(() => decodeURIComponent(route.path))
 const targetScroll = () => unrefElement(containerRef)
 
 const { y: scrollY } = useScroll(containerRef)

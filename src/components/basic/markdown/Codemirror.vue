@@ -47,7 +47,7 @@ const emits = defineEmits(['update:modelValue'])
 const content = ref(props.modelValue)
 const cmRef = ref()
 const cmOptions = reactive({
-	mode: 'text/markdown',
+	mode: 'text/javascript',
 	smartIndent: true,
 	// 缩进单位
 	indentUnit: 4,

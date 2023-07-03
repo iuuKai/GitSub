@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-03-29 12:40:31
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-01 13:59:46
+ * @LastEditTime: 2023-07-03 11:52:44
  * @FilePath: \gitsub\src\views\Repo\pages\Content.vue
  * @Description: 
  * @QQ/微信: 790331286
@@ -272,12 +272,12 @@ export default defineComponent({
 				})
 		})
 
-		watch(
-			() => state.fileContents,
-			content => {
-				repoStore.setMdContent(content)
-			}
-		)
+		// watch(
+		// 	() => state.fileContents,
+		// 	content => {
+		// 		repoStore.setTextContent(content)
+		// 	}
+		// )
 
 		// let foo = false
 		// onMounted(() => {
@@ -359,8 +359,8 @@ export default defineComponent({
 					const [commit] = await repoStore.apiGetRepoCommitList({
 						owner,
 						repo,
-						path,
-						per_page: '1'
+						path
+						// per_page: '1'
 					})
 					return {
 						...item,
@@ -457,7 +457,7 @@ export default defineComponent({
 			if (!link || /^\/?#/.test(link)) return
 
 			const url = decodeURIComponent(link)
-			if (/^\.\.\/|^\.\//.test(url) && !isFullscreen.value) {
+			if (!/^(http[s]?:)?\/\//i.test(url) && !isFullscreen.value) {
 				const { path } = route.params
 				const { default_branch: branch } = repoStore.getDetails
 				const curPathList = (path || []).map(item => item)
@@ -483,6 +483,7 @@ export default defineComponent({
 					...route,
 					params: {
 						...route.params,
+						contentType: route.params.contentType || 'blob',
 						path: pathList,
 						branch
 					},

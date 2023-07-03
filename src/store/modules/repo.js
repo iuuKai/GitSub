@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-11-30 08:07:33
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-01 14:05:48
+ * @LastEditTime: 2023-07-03 09:13:11
  * @FilePath: \gitsub\src\store\modules\repo.js
  * @Description:
  * @QQ/微信: 790331286
@@ -23,21 +23,21 @@ export const useRepoStore = defineStore({
 		// 仓库路径
 		path: '',
 		// 仓库详情
-		details: null,
+		details: {},
 		// 文件或目录
-		contents: null,
+		contents: [],
 		// 文件内容
-		mdContent: '',
+		textContent: '',
 		// 当前路径提交
-		curPathCommit: null,
+		curPathCommit: {},
 		// 仓库动态
-		events: null,
+		events: [],
 		// 贡献者
-		contributors: null,
+		contributors: [],
 		// 所有发行版
-		releases: null,
+		releases: [],
 		releasesTotal: 0,
-		languages: null
+		languages: []
 	}),
 	getters: {
 		accountStore() {
@@ -52,8 +52,11 @@ export const useRepoStore = defineStore({
 		getDetails() {
 			return this.details
 		},
-		// getMdContent() {
-		// 	return this.mdContent
+		getPath() {
+			return this.path
+		},
+		// gettextContent() {
+		// 	return this.textContent
 		// },
 		getCurPathCommit() {
 			return this.curPathCommit
@@ -63,8 +66,8 @@ export const useRepoStore = defineStore({
 		setRepoState(key, value) {
 			this[key] = value
 		},
-		setMdContent(_md) {
-			this.mdContent = _md
+		setTextContent(_content) {
+			this.textContent = _content
 		},
 		...apiActions
 	}

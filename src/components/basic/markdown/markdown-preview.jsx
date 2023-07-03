@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-01-11 04:14:25
  * @LastEditors: iuukai
- * @LastEditTime: 2023-05-11 19:33:19
+ * @LastEditTime: 2023-07-02 22:15:20
  * @FilePath: \gitsub\src\components\basic\markdown\markdown-preview.jsx
  * @Description:
  * @QQ/微信: 790331286
@@ -114,7 +114,6 @@ export default defineComponent({
 			// 链接拦截
 			if (elParentName === 'a' || elName === 'a') {
 				const url = (elParentName === 'a' ? elParent : el).getAttribute('href')
-				console.log(123, (elParentName === 'a' ? elParent : el).getAttribute('href'))
 				emit('link-before', url)
 			}
 

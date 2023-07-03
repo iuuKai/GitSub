@@ -2,13 +2,14 @@
  * @Author: iuukai
  * @Date: 2023-06-24 02:39:46
  * @LastEditors: iuukai
- * @LastEditTime: 2023-06-30 12:33:25
+ * @LastEditTime: 2023-07-03 11:44:46
  * @FilePath: \gitsub\src\views\Repo\script\repo-index.js
  * @Description:
  * @QQ/微信: 790331286
  */
 import { useRepoStore } from '@/store/modules/repo'
 import colors from '@/utils/colors.json'
+import { Base64 } from '@/utils/crypto'
 import { isArray, isEmpty, toNumber, sum, round } from 'lodash-es'
 
 const repoStore = useRepoStore()
@@ -29,7 +30,6 @@ export const repoDetails = async (to = {}) => {
 		if (repo && repo !== repoStore.getRepoName) {
 			// 仓库详情信息
 			const details = await repoStore.apiGetRepo({ owner, repo })
-			// await repoStore.setDetails(details)
 			repoStore.setRepoState('details', details)
 		}
 	} catch (err) {
@@ -49,17 +49,19 @@ export const repoContents = async (to = {}) => {
 			repo,
 			path: isArray(path) ? path.join('/') : ''
 		}
-		const p = Object.values(params).join('/')
-		if (to.name !== 'Content' || cachePath === p) return
+		const p = Object.values(params).filter(Boolean).join('/')
+		if (!['Content', 'Edit'].includes(to.name) || cachePath === p) return
 		if (branch) params.ref = branch
 		// 仓库内容
 		const contents = await repoStore.apiGetRepoPathContents(params)
-		if (isArray(contents)) contents.sort((a, b) => a.type.localeCompare(b.type))
-		if (isArray(contents) && !contents.length) throw new Error('404')
+		if (isEmpty(contents)) throw new Error('404')
+		if (isArray(contents)) {
+			contents.sort((a, b) => a.type.localeCompare(b.type))
+		} else {
+			repoStore.setRepoState('textContent', Base64.dec(contents.content))
+		}
 		const curType = isArray(contents) ? 'tree' : 'blob'
-		// await repoStore.setPath(p)
-		// await repoStore.setContents(contents)
-		repoStore.setRepoState('path', path)
+		repoStore.setRepoState('path', p)
 		repoStore.setRepoState('contents', contents)
 		if (contentType && contentType !== curType)
 			return routerCatchNext('replace', {
@@ -70,7 +72,6 @@ export const repoContents = async (to = {}) => {
 				}
 			})
 	} catch (err) {
-		console.log(err, 444)
 		// return { err, msg: '获取仓库内容失败', type: 'null' }
 		return routerCatchNext('404', err, '获取仓库内容失败')
 	}
@@ -93,8 +94,7 @@ export const curPathCommit = async (to = {}) => {
 			},
 			true
 		)
-		const total = meta.total_count || meta.last.page
-		// await repoStore.setCurPathCommit(curCommit, String(path) ? 0 : total)
+		const total = meta?.total_count || meta.last?.page || 0
 		repoStore.setRepoState('curPathCommit', {
 			...curCommit,
 			total: String(path) ? 0 : total
@@ -114,7 +114,6 @@ export const repoEvents = async (to = {}, params = {}) => {
 			repo,
 			...params
 		})
-		console.log(res)
 		repoStore.setRepoState('events', res)
 	} catch (err) {
 		// return { err, msg: '获取仓库动态失败' }
@@ -133,7 +132,6 @@ export const repoContributors = async (to = {}, params = {}) => {
 			page: 1,
 			per_page: 10
 		})
-		console.log(res)
 		repoStore.setRepoState('contributors', res)
 	} catch (err) {
 		// return { err, msg: '获取仓库贡献者失败' }
@@ -153,7 +151,6 @@ export const repoReleases = async (to = {}, params = {}) => {
 			},
 			true
 		)
-		console.log(meta)
 		const total = meta.total_count || meta.last?.page || data.length
 		repoStore.setRepoState('releases', data)
 		if ((meta.last && toNumber(meta.last.per_page) === 1) || !data.length)
@@ -189,7 +186,7 @@ export default function (to) {
 	const list = [
 		{ task: repoDetails, isTaskAtHome: false },
 		{ task: repoContents, isTaskAtHome: false },
-		{ task: curPathCommit, isTaskAtHome: true },
+		{ task: curPathCommit, isTaskAtHome: false },
 		{
 			task: repoEvents,
 			isTaskAtHome: true,

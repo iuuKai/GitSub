@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-12-28 00:16:23
  * @LastEditors: iuukai
- * @LastEditTime: 2023-06-28 13:03:32
+ * @LastEditTime: 2023-07-03 10:33:25
  * @FilePath: \gitsub\src\views\Repo\index.vue
  * @Description: 
  * @QQ/微信: 790331286
@@ -22,10 +22,12 @@ import getTasks from './script/repo-index'
 
 const beforeRoute = async (to, from, next) => {
 	try {
-		const promiseList = getTasks(to)
-		const _toList = await Promise.all(promiseList)
-		const errorList = _toList.filter(Boolean)
-		if (errorList.length) throw errorList
+		if (decodeURIComponent(to.path) !== decodeURIComponent(from.path)) {
+			const promiseList = getTasks(to)
+			const _toList = await Promise.all(promiseList)
+			const errorList = _toList.filter(Boolean)
+			if (errorList.length) throw errorList
+		}
 		next()
 	} catch (err) {
 		console.log(err)

@@ -13,14 +13,7 @@ import style from './components.module.less'
 export default defineComponent({
 	props: {},
 	setup() {
-		const {
-			details,
-			events = [],
-			contributors,
-			releases,
-			releasesTotal,
-			languages = []
-		} = useRepoStore()
+		const { details, events, contributors, releases, releasesTotal, languages } = useRepoStore()
 		const latestReleases = releases[0]
 		const white = [
 			{ type: null, template: '' },
@@ -116,13 +109,13 @@ export default defineComponent({
 								</div>
 							</>
 						)}
-						<a-divider />
 						{
 							<>
+								<a-divider />
 								<a-typography-title level={3}>
 									<a-space>
 										<span>发行版</span>
-										<span>({releasesTotal})</span>
+										{!isEmpty(releasesTotal) && <span>({releasesTotal})</span>}
 									</a-space>
 								</a-typography-title>
 								{!isEmpty(latestReleases) ? (
@@ -142,13 +135,13 @@ export default defineComponent({
 										</div>
 									</div>
 								) : (
-									<a-empty />
+									<a-empty description="暂无发行版" />
 								)}
 							</>
 						}
-						<a-divider />
 						{!isEmpty(contributors) && (
 							<>
+								<a-divider />
 								<a-typography-title level={3}>贡献者</a-typography-title>
 								<a-avatar-group max-count={10}>
 									{contributors.map(user => (
@@ -179,9 +172,9 @@ export default defineComponent({
 								</a-avatar-group>
 							</>
 						)}
-						<a-divider />
 						{!isEmpty(languages) && (
 							<>
+								<a-divider />
 								<a-typography-title level={3}>语言</a-typography-title>
 								<div class={style['progress']}>
 									{arr.map(lang => (
