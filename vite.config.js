@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-10-21 00:44:41
  * @LastEditors: iuukai
- * @LastEditTime: 2023-06-24 17:06:57
+ * @LastEditTime: 2023-07-03 12:32:00
  * @FilePath: \gitsub\vite.config.js
  * @Description:
  * @QQ/微信: 790331286
@@ -200,11 +200,12 @@ export default defineConfig(({ mode }) => ({
 					var: 'marked',
 					path: 'https://cdn.jsdelivr.net/npm/marked@4.2.12/marked.min.js'
 				},
-				{
-					name: 'prismjs',
-					var: 'Prism',
-					path: 'https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js'
-				},
+				// CDN 只有部分常用语言，而不是所有语言
+				// {
+				// 	name: 'prismjs',
+				// 	var: 'Prism',
+				// 	path: 'https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js'
+				// },
 				{
 					name: 'lodash-es',
 					var: '_',
