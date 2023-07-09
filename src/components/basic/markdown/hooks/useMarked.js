@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-02-28 00:50:42
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-01 14:11:59
+ * @LastEditTime: 2023-07-08 07:51:06
  * @FilePath: \gitsub\src\components\basic\markdown\hooks\useMarked.js
  * @Description:
  * @QQ/微信: 790331286
@@ -12,6 +12,7 @@ import { useMutationObserver } from '@vueuse/core'
 import emojiRegexCreater from 'emoji-regex'
 import { Renderer, parse, use } from 'marked'
 import xss from 'xss'
+import { markedEmoji } from 'marked-emoji'
 import markedKatex from 'marked-katex-extension'
 import Prism from 'prismjs'
 // 高亮主题
@@ -22,6 +23,7 @@ import solarized from 'prismjs/themes/prism-solarizedlight.min.css?inline'
 import mermaid from 'mermaid'
 import 'katex/dist/katex.min.css'
 import flowchart from 'flowchart.js'
+import emojis from '@/utils/emojis'
 import { useFlatToTree } from './useFlatToTree'
 
 // window.mermaid = mermaid
@@ -44,6 +46,10 @@ use(
 		// 将 throwOnError 设置为 false
 		throwOnError: false,
 		strict: false
+	}),
+	markedEmoji({
+		emojis,
+		unicode: false
 	})
 )
 
@@ -75,15 +81,6 @@ const state = reactive({
 	anchorsTree: computed(() => {
 		const { treeList } = useFlatToTree(state.anchorsFlat)
 		return treeList
-		// const list = state.anchorsFlat
-		// return list.reduce((res, cur, i) => {
-		// 	if (!res.length || cur.level <= res[0].level) {
-		// 		res.push({ ...cur, children: [] })
-		// 	} else {
-		// 		res[res.length - 1].children.push({ ...cur })
-		// 	}
-		// 	return res
-		// }, [])
 	})
 })
 const isDarkTheme = ref(false)
@@ -107,7 +104,7 @@ const renderer = {
 			hasTaskList = true
 			taskListItemClass = 'class="task-list-item"'
 			text = text.replace(
-				/^\s*\[[x ]\]\s*/,
+				/^\s*\[(x| )\]\s*/,
 				(match, checked) => `<input type="checkbox" ${checked === 'x' ? 'checked' : ''} disabled>`
 			)
 		} else {
@@ -162,7 +159,7 @@ const renderer = {
 			const md =
 				langs.filter(Boolean).length && Prism.languages[langs[0]]
 					? Prism.highlight(code, Prism.languages[langs[0]], infostring)
-					: code
+					: code.replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
 			return `
 			<div class="code_wrap">
@@ -180,7 +177,7 @@ const renderer = {
  * @param {*} value
  * @returns
  */
-function getHtmlStr(value) {
+function getHtmlStr(value, showAnchor) {
 	const codeBlockList = []
 	const v = value
 		.replace(/```([\s\S]*?)```/g, match => {
@@ -286,8 +283,8 @@ function getHtmlStr(value) {
 			},
 			escapeHtml(html) {
 				// 仅对需要正常显示，但又不属于元素的尖括号进行转义
-				return html.replace(/<[^/][^>\n]*>|<.+?\/>/g, match => {
-					return match.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+				return html.replace(/<[^/-][^>\n,]*>|<.+?\/>/g, match => {
+					return /:\s+/.test(match) ? match : match.replace(/</g, '&lt;').replace(/>/g, '&gt;')
 				})
 			}
 		})
@@ -302,61 +299,68 @@ function getHtmlStr(value) {
 	const idMark = {}
 	// console.log(str)
 	return value
-		? str.replace(/<h([1-6])([^>]*)>((?:.|\n)*?)<\/h\1>/gi, (match, level, attrs, text) => {
-				// console.log(match, text)
-				const isHasId = /id="([^"]*)"/.exec(attrs)
-				const isTagText = /<(\w+)([^>]*)>(.*?)<\/\1>/.exec(text)
-				const content = isTagText ? isTagText[3] : text
-
-				let id = isHasId ? isHasId[1] : content.toLowerCase().replace(/\s+/g, '-')
-				if (idMark[id]) {
-					idMark[id]++
-					id += '-' + (idMark[id] - 1)
-				} else {
-					idMark[id] = 1
-				}
-
-				const emojiRegex = emojiRegexCreater()
-
-				// 过滤图片标签
-				const textFilterImg = content.replace(/(<img[^>]*\/?>)/gi, '')
-				// 过滤其他标签多余标签
-				const textNoTag = /^<(\w+)([^>]*)>/.test(textFilterImg)
-					? textFilterImg.match(/<(\w+)[^>]*>(.*?)<\/\1>/)[2].replace(/^\s*|\s*$/gi, '')
-					: textFilterImg.replace(/<(\w+)([^>]*)>(.*?)<\/\1>/gi, '')
-
-				// id过滤表情
-				const idNoEmoji = id
-					? id.replace(emojiRegex, '').replace(/^[\s-]*|[\s-]*$/gi, '')
-					: content.toLowerCase().replace(/\s+/g, '-')
-				// 属性过滤id
-				const attrsNoId = attrs.replace(/id="[^"]*"|^\s*|\s*$/gi, '')
-
-				state.anchorsFlat.push({
-					title: textNoTag,
-					href: '#' + idNoEmoji,
-					level
+		? str
+				.replace(/<img[^>]*>/g, match => {
+					const isEmojiIMG =
+						match.indexOf('https://github.githubassets.com/images/icons/emoji/unicode/') > -1
+					return isEmojiIMG ? match.replace('<img', '<img class="emoji"') : match
 				})
+				.replace(/<h([1-6])([^>]*)>((?:.|\n)*?)<\/h\1>/gi, (match, level, attrs, text) => {
+					const isHasId = /id="([^"]*)"/.exec(attrs)
+					const isTagText = /<(\w+)([^>]*)>(.*?)<\/\1>/.exec(text)
+					const content = isTagText ? isTagText[3] : text
 
-				// console.log({ match, level, id, text, attrsNoId })
+					let id = isHasId ? isHasId[1] : content.toLowerCase().replace(/\s+/g, '-')
+					if (idMark[id]) {
+						idMark[id]++
+						id += '-' + (idMark[id] - 1)
+					} else {
+						idMark[id] = 1
+					}
 
-				return `<h${level} ${attrsNoId} id="${idNoEmoji}" class="ant-typography">
-						<a id="user-content-${idNoEmoji}" name="${idNoEmoji}" class="anchor">
-							<span data-type="anchor" data-hash="#${idNoEmoji}" class="iconfont icon-pin"></span>
-						</a>
+					const emojiRegex = emojiRegexCreater()
+
+					// 过滤图片标签
+					const textFilterImg = content.replace(/(<img[^>]*\/?>)/gi, '')
+					// 过滤其他标签多余标签
+					const textNoTag = /^<(\w+)([^>]*)>/.test(textFilterImg)
+						? textFilterImg.match(/<(\w+)[^>]*>(.*?)<\/\1>/)[2].replace(/^\s*|\s*$/gi, '')
+						: textFilterImg.replace(/<(\w+)([^>]*)>(.*?)<\/\1>/gi, '')
+
+					// id过滤表情
+					const idNoEmoji = id
+						? id.replace(emojiRegex, '').replace(/^[\s-]*|[\s-]*$/gi, '')
+						: content.toLowerCase().replace(/\s+/g, '-')
+					// 属性过滤id
+					const attrsNoId = attrs.replace(/id="[^"]*"|^\s*|\s*$/gi, '')
+
+					state.anchorsFlat.push({
+						title: textNoTag.replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
+						href: '#' + idNoEmoji,
+						level
+					})
+
+					// console.log({ match, level, id, text, attrsNoId })
+
+					return `<h${level} ${
+						showAnchor ? `${attrsNoId} id="${idNoEmoji}"` : ''
+					} class="ant-typography">
+						${
+							showAnchor
+								? `<a id="user-content-${idNoEmoji}" name="${idNoEmoji}" class="anchor">
+								<span data-type="anchor" data-hash="#${idNoEmoji}" class="iconfont icon-pin"></span>
+							</a>`
+								: ''
+						}
 						<span>${text}</span>
 					</h${level}>`
-		  }) /* .replace(/(\x20|\t){2}/gi, '') */
+				}) /* .replace(/(\x20|\t){2}/gi, '') */
 		: ''
 }
 
-export function useMarked(value = '', title = '.md') {
+export function useMarked(value = '', showAnchor = false) {
 	state.anchorsFlat = []
-	const match = title.match(/^([^\.]*)|([^\.]+)$/g)
-	const lang = (match[1] ?? '').replace('vue', 'html')
-	const isMarkdown = /^md$/i.test(lang)
-	const mdStr = isMarkdown ? value : `\`\`\`${lang}\n${value}\n\`\`\``
-	const content = getHtmlStr(mdStr)
+	const content = getHtmlStr(value, showAnchor)
 	const mermaidConfig = () => ({
 		securityLevel: 'loose',
 		startOnLoad: false,
@@ -392,7 +396,7 @@ export function useMarked(value = '', title = '.md') {
 	return {
 		content,
 		anchors: state.anchorsTree,
-		isMarkdown,
+		// isMarkdown,
 		isDarkTheme
 	}
 }

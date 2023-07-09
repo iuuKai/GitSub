@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-01-11 04:14:25
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-02 22:15:20
+ * @LastEditTime: 2023-07-07 14:06:55
  * @FilePath: \gitsub\src\components\basic\markdown\markdown-preview.jsx
  * @Description:
  * @QQ/微信: 790331286
@@ -27,6 +27,10 @@ export default defineComponent({
 			type: Boolean,
 			default: false
 		},
+		showAnchor: {
+			type: Boolean,
+			default: false
+		},
 		title: String,
 		content: String
 	},
@@ -39,10 +43,10 @@ export default defineComponent({
 		// 勿放在 return 导致重复执行
 		const {
 			content: parseContent,
-			isMarkdown,
+			// isMarkdown,
 			anchors,
 			isDarkTheme
-		} = useMarked(props.content, props.title)
+		} = useMarked(props.content, props.showAnchor)
 		const copyedList = []
 
 		watch(
@@ -111,13 +115,18 @@ export default defineComponent({
 				})
 			}
 
-			// 链接拦截
+			// 链接拦截、内容里的锚点
 			if (elParentName === 'a' || elName === 'a') {
 				const url = (elParentName === 'a' ? elParent : el).getAttribute('href')
-				emit('link-before', url)
+				console.log(/^#/.test(url), url, 555)
+				if (/^#/.test(url)) {
+					unref(anchorRef).scrollTo(url)
+				} else if (url) {
+					emit('link-before', url)
+				}
 			}
 
-			// 锚点
+			// 生成的锚点
 			if (elName === 'span' && elType === 'anchor' && unref(anchorRef)) {
 				// 调用子组件方法
 				unref(anchorRef).scrollTo(el.dataset.hash)
@@ -125,10 +134,10 @@ export default defineComponent({
 		}
 
 		return () => {
-			const { isFullscreen } = props
+			const { isFullscreen, showAnchor } = props
 			return unref(parseContent) ? (
 				<a-row class={isFullscreen ? style['is-fullscreen'] : ''}>
-					<a-col span={isMarkdown ? 5 : 0}>
+					<a-col span={showAnchor ? 5 : 0}>
 						<div class={style['markdown-anchor']}>
 							<MdAnchor
 								isFullscreen={isFullscreen}
@@ -138,8 +147,8 @@ export default defineComponent({
 							/>
 						</div>
 					</a-col>
-					<a-col span={isMarkdown ? 19 : 24}>
-						<div class={style['md_pd_wrap']}>
+					<a-col span={showAnchor ? 19 : 24}>
+						<div class={[style['md_pd_wrap'], showAnchor && style['is-show_anchor']]}>
 							<div
 								ref={mdContainerRef}
 								class={style['markdown-body']}

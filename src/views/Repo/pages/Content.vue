@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-03-29 12:40:31
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-03 11:52:44
+ * @LastEditTime: 2023-07-07 12:32:17
  * @FilePath: \gitsub\src\views\Repo\pages\Content.vue
  * @Description: 
  * @QQ/微信: 790331286
@@ -104,6 +104,7 @@
 						>
 							<MarkDownPreview
 								ref="mdRef"
+								showAnchor
 								:isDark="isDark"
 								:title="title"
 								:content="fileContents"
@@ -118,62 +119,6 @@
 			</a-col>
 			<a-col :span="isPortal ? 6 : 0">
 				<RepoProfile />
-				<!-- <div v-if="repoDetails" :style="{ position: 'sticky', top: '80px' }">
-					<Gradients type="border" />
-					<a-card :bodyStyle="{ padding: '15px' }">
-						<a-typography-title :level="3">简介</a-typography-title>
-						<div>
-							<a-typography-text type="secondary">
-								{{ repoDetails.description || 'No description, website, or topics provided.' }}
-							</a-typography-text>
-						</div>
-						<div v-if="repoDetails.homepage">
-							<a-typography-link :href="repoDetails.homepage" target="_blank">
-								{{ repoDetails.homepage }}
-							</a-typography-link>
-						</div>
-						<div v-if="repoDetails.topics">
-							<a-tag v-for="tag in repoDetails.topics" :key="tag" color="blue">
-								{{ tag }}
-							</a-tag>
-						</div>
-						<div v-if="isHasReadme" @click="handleScrollTo">Readme</div>
-						<div v-if="repoDetails.license && isHasLicense">License</div>
-						<div>Stars: {{ repoDetails.stargazers_count }}</div>
-						<div>Watching: {{ repoDetails.subscribers_count }}</div>
-						<div>Forks: {{ repoDetails.network_count }}</div>
-						<a-divider />
-						<a-typography-title :level="3">发行版</a-typography-title>
-						<div v-if="latestReleases">
-							{{ latestReleases.name }}
-							<a-tag color="green">Latest</a-tag>
-							<div>
-								<time :datetime="latestReleases.published_at" :title="latestReleases.published_at">
-									{{ latestReleases.published_at }}
-								</time>
-							</div>
-						</div>
-						<a-empty v-else />
-						<a-divider />
-						<a-typography-title :level="3">贡献者</a-typography-title>
-						<a-avatar-group :max-count="10">
-							<a-tooltip
-								v-for="item in contributorList"
-								:key="item.id"
-								:title="item.login"
-								placement="top"
-							>
-								<a-avatar :src="item.avatar_url">
-									<template #icon><UserOutlined /></template>
-								</a-avatar>
-							</a-tooltip>
-						</a-avatar-group>
-						<a-divider />
-						<a-typography-title :level="3">近期动态</a-typography-title>
-						<a-divider />
-						<a-typography-title :level="3">语言</a-typography-title>
-					</a-card>
-				</div> -->
 			</a-col>
 		</a-row>
 		<!-- <iframe
@@ -320,9 +265,7 @@ export default defineComponent({
 			try {
 				const { owner, repo } = route.params
 				const params = { owner, repo }
-				// const portalRequestList = state.isPortal ? getPromiseList(params) : []
 				const list = [getFileContent(params), getCommitList(params)]
-
 				const responseList = await Promise.all(list)
 				const errorList = responseList.filter(Boolean)
 
@@ -373,39 +316,6 @@ export default defineComponent({
 			}
 		}
 
-		// 其他主页数据
-		function getPromiseList(_params = {}) {
-			const list = [
-				// { model: 'eventList', bindAction: 'apiGetRepoEventList' },
-				// {
-				// 	model: 'contributorList',
-				// 	bindAction: 'apiGetRepoContributorList',
-				// 	// authors | committers
-				// 	bindParams: { type: 'authors', page: 1, per_page: 10 }
-				// },
-				// {
-				// 	model: 'tagList',
-				// 	bindAction: 'apiGetRepoTagList',
-				// 	bindParams: {
-				// 		page: 1,
-				// 		per_page: 1
-				// 	}
-				// },
-				// { model: 'latestReleases', bindAction: 'apiGetRepoLatestReleases' }
-			]
-			return list
-				.map(item => async () => {
-					const { bindAction, model, bindParams } = item
-					try {
-						const params = Object.assign({}, _params, bindParams)
-						state[model] = await repoStore[bindAction](params)
-					} catch (err) {
-						return Promise.resolve({ name: bindAction, state: model, err })
-					}
-				})
-				.map(item => item())
-		}
-
 		// 下载
 		async function handleClickDownload(file) {
 			try {
@@ -453,9 +363,6 @@ export default defineComponent({
 
 		// md 链接
 		function handleClickLink(link) {
-			// 无链接或者锚点
-			if (!link || /^\/?#/.test(link)) return
-
 			const url = decodeURIComponent(link)
 			if (!/^(http[s]?:)?\/\//i.test(url) && !isFullscreen.value) {
 				const { path } = route.params
@@ -492,9 +399,10 @@ export default defineComponent({
 			} else {
 				Modal.confirm({
 					icon: h(ExclamationCircleOutlined),
-					title: 'Are you sure delete this task?',
+					title: '即将跳转到外部网站, 是否继续?',
+					content: () => h('a', link),
+					width: '620px',
 					getContainer: () => (isFullscreen.value ? unrefElement(mdContainerRef) : document.body),
-					content: 'Some descriptions',
 					centered: true,
 					okType: 'primary',
 					okText: 'Yes',
@@ -504,6 +412,7 @@ export default defineComponent({
 					cancelText: 'No',
 					onOk() {
 						console.log('OK', url)
+						window.open(link, '_blank')
 					},
 					onCancel() {
 						console.log('Cancel')

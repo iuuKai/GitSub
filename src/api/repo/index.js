@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-01-01 13:07:26
  * @LastEditors: iuukai
- * @LastEditTime: 2023-06-30 07:20:46
+ * @LastEditTime: 2023-07-08 11:02:16
  * @FilePath: \gitsub\src\api\repo\index.js
  * @Description:
  * @QQ/微信: 790331286
@@ -175,7 +175,7 @@ export function getRepoDownloadZIP(params = {}) {
 }
 
 // 获取仓库所有发行版
-export function getRepoReleases(params = {}, isAll = false) {
+export function getRepoReleaseList(params = {}, isAll = false) {
 	const { owner, repo } = params
 	const url = `/repos/${owner}/${repo}/releases`
 	return request({
@@ -186,9 +186,42 @@ export function getRepoReleases(params = {}, isAll = false) {
 }
 
 // 获取仓库最新的发行版
-export function getRepoLatestReleases(params = {}) {
+export function getRepoLatestRelease(params = {}) {
 	const { owner, repo } = params
 	const url = `/repos/${owner}/${repo}/releases/latest`
+	return request({
+		url,
+		method: 'get',
+		params
+	}).then(res => res.data)
+}
+
+// 获取仓库的所有Issues
+export function getRepoIssueList(params = {}) {
+	const { owner, repo } = params
+	const url = `/repos/${owner}/${repo}/issues`
+	return request({
+		url,
+		method: 'get',
+		params
+	}).then(res => res.data)
+}
+
+// 获取仓库的某个Issue
+export function getRepoIssue(params = {}) {
+	const { owner, repo, number } = params
+	const url = `/repos/${owner}/${repo}/issues/${number}`
+	return request({
+		url,
+		method: 'get',
+		params
+	}).then(res => res.data)
+}
+
+// 获取仓库某个Issue所有的评论
+export function getRepoIssueCommentList(params = {}) {
+	const { owner, repo, number } = params
+	const url = `/repos/${owner}/${repo}/issues/${number}/comments`
 	return request({
 		url,
 		method: 'get',

@@ -8,7 +8,30 @@
 }
 
 .md_pd_wrap {
-  @apply py-4 px-8;
+  &.is-show_anchor {
+    @apply py-4 px-8;
+
+    .markdown-body {
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        @apply -ml-6 pl-6;
+
+        &:hover {
+          :global(a.anchor) {
+            @apply visible;
+          }
+        }
+
+        &:not(h3,h4,h5,h6)::after {
+          @apply content-[''] w-[calc(100%-1.5rem)];
+        }
+      }
+    }
+  }
 
   .markdown-body {
     @apply min-w-0 break-words;
@@ -32,19 +55,11 @@
     h4,
     h5,
     h6 {
-      @apply -ml-6 pl-6;
-
-      &:hover {
-        :global(a.anchor) {
-          @apply visible;
-        }
-      }
-
       &:not(h3,h4,h5,h6) {
         @apply relative pb-1;
 
         &::after {
-          @apply absolute right-0 bottom-0 content-[''] h-2px w-[calc(100%-1.5rem)];
+          @apply absolute right-0 bottom-0 content-[''] h-2px w-full;
           @apply bg-light-500 dark:bg-dark-300;
         }
       }
@@ -104,6 +119,10 @@
     img {
       @apply inline-block;
 
+      &:global(.emoji) {
+        @apply w-16px h-16px;
+      }
+
       &:not(:last-child) {
         // @apply mt-0 mb-4;
       }
@@ -118,7 +137,7 @@
       }
 
       &:checked::before {
-        @apply content-['☑️'] dark:content-['✅'];
+        @apply content-['✅'];
       }
     }
 
@@ -137,7 +156,7 @@
 
     tt,
     code:not([class*="language-"]), {
-      @apply m-0 py-1 px-2 whitespace-pre-wrap bg-gray-200 dark:bg-dark-100;
+      @apply m-0 py-2px px-1 whitespace-pre-wrap bg-gray-200 dark:bg-dark-100;
     }
 
     kbd {

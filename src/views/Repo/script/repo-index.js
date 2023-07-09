@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-06-24 02:39:46
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-03 11:44:46
+ * @LastEditTime: 2023-07-06 18:13:17
  * @FilePath: \gitsub\src\views\Repo\script\repo-index.js
  * @Description:
  * @QQ/微信: 790331286
@@ -47,13 +47,13 @@ export const repoContents = async (to = {}) => {
 		const params = {
 			owner,
 			repo,
-			path: isArray(path) ? path.join('/') : ''
+			path: isArray(path) ? path.join('/') : path
 		}
-		const p = Object.values(params).filter(Boolean).join('/')
-		if (!['Content', 'Edit'].includes(to.name) || cachePath === p) return
+		if (!['Content', 'Edit'].includes(to.name) || cachePath === to.path) return
 		if (branch) params.ref = branch
 		// 仓库内容
 		const contents = await repoStore.apiGetRepoPathContents(params)
+
 		if (isEmpty(contents)) throw new Error('404')
 		if (isArray(contents)) {
 			contents.sort((a, b) => a.type.localeCompare(b.type))
@@ -61,7 +61,7 @@ export const repoContents = async (to = {}) => {
 			repoStore.setRepoState('textContent', Base64.dec(contents.content))
 		}
 		const curType = isArray(contents) ? 'tree' : 'blob'
-		repoStore.setRepoState('path', p)
+		repoStore.setRepoState('path', to.path)
 		repoStore.setRepoState('contents', contents)
 		if (contentType && contentType !== curType)
 			return routerCatchNext('replace', {
@@ -143,7 +143,7 @@ export const repoContributors = async (to = {}, params = {}) => {
 export const repoReleases = async (to = {}, params = {}) => {
 	try {
 		const { owner, repo } = to.params
-		const { data, meta } = await repoStore.apiGetRepoReleases(
+		const { data, meta } = await repoStore.apiGetRepoReleaseList(
 			{
 				owner,
 				repo,

@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-12-28 00:16:23
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-03 10:33:25
+ * @LastEditTime: 2023-07-06 07:38:54
  * @FilePath: \gitsub\src\views\Repo\index.vue
  * @Description: 
  * @QQ/微信: 790331286
@@ -55,4 +55,10 @@ export default defineComponent({
 })
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+:deep(.emoji) {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+}
+</style>

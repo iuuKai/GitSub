@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-12-14 16:57:55
  * @LastEditors: iuukai
- * @LastEditTime: 2023-05-17 04:00:07
+ * @LastEditTime: 2023-07-06 15:46:53
  * @FilePath: \gitsub\src\router\staticModules\baseLayout.js
  * @Description:
  * @QQ/微信: 790331286
@@ -60,6 +60,11 @@ const gitPage = [
 						path: 'edit/:branch?/:path*',
 						name: 'Edit',
 						component: () => import('@/views/Repo/pages/Edit.vue')
+					},
+					{
+						path: 'issues/:number?',
+						name: 'Issues',
+						component: () => import('@/views/Repo/pages/Issues.vue')
 					}
 				]
 			}

@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-03-04 15:18:39
  * @LastEditors: iuukai
- * @LastEditTime: 2023-06-25 07:24:27
+ * @LastEditTime: 2023-07-06 16:11:10
  * @FilePath: \gitsub\src\views\Repo\components\repo-header.jsx
  * @Description:
  * @QQ/微信: 790331286
@@ -19,7 +19,7 @@ import {
 	UnlockOutlined
 } from '@ant-design/icons-vue'
 import { isArray } from 'lodash-es'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import style from './components.module.less'
 
 export default defineComponent({
@@ -28,6 +28,8 @@ export default defineComponent({
 	emits: ['breadcrumb-click'],
 	setup(props, { emit }) {
 		const route = useRoute()
+		const router = useRouter()
+
 		const state = reactive({
 			activeKey: 0,
 			tabs: [
@@ -42,6 +44,9 @@ export default defineComponent({
 			() => state.activeKey,
 			k => {
 				console.log(state.tabs[k])
+				if (state.tabs[k].label === 'Issues') {
+					router.push({ name: 'Issues' })
+				}
 			}
 		)
 
@@ -56,9 +61,11 @@ export default defineComponent({
 			},
 			{ breadcrumbName: repo, icon: null }
 		].concat(
-			(isArray(path) ? path : path.split('/')).filter(Boolean).map(v => ({
-				breadcrumbName: v
-			}))
+			['Content', 'Edit'].includes(route.name)
+				? (isArray(path) ? path : path.split('/')).filter(Boolean).map(v => ({
+						breadcrumbName: v
+				  }))
+				: []
 		)
 
 		return () => {

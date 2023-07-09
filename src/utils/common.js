@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-02-15 11:39:12
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-03 10:07:54
+ * @LastEditTime: 2023-07-05 21:49:45
  * @FilePath: \gitsub\src\utils\common.js
  * @Description:
  * @QQ/微信: 790331286
@@ -157,13 +157,14 @@ const htmlTags = [
 	'wbr',
 	'xmp'
 ]
-
+// html标签
 export function isHtmlTag(str) {
 	const reg =
 		/^(a|abbr|acronym|address|applet|area|article|aside|audio|b|base|basefont|bdi|bdo|big|blockquote|body|br|button|canvas|caption|center|cite|code|col|colgroup|data|datalist|dd|del|details|dfn|dialog|dir|div|dl|dt|em|embed|fieldset|figcaption|figure|font|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|header|hr|html|i|iframe|img|input|ins|kbd|label|legend|li|link|main|map|mark|menu|menuitem|meta|meter|nav|noframes|noscript|object|ol|optgroup|option|output|p|param|picture|pre|progress|q|rp|rt|ruby|s|samp|script|section|select|small|source|span|strike|strong|style|sub|summary|sup|svg|table|tbody|td|template|textarea|tfoot|th|thead|time|title|tr|track|tt|u|ul|var|video|wbr|xmp)$/i
 	return reg.test(str)
 }
 
+// 是否url编码
 export function isUrlEncoded(str) {
 	if (str.indexOf('%') < 0) {
 		return false
