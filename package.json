@@ -10,7 +10,7 @@
 		"lint:stylelint": "stylelint --cache --fix \"**/*.{vue,less,postcss,css,scss}\" --cache --cache-location node_modules/.cache/stylelint/"
 	},
 	"engines": {
-		"node": ">=16.14"
+		"node": "16.14"
 	},
 	"dependencies": {
 		"@lottiefiles/lottie-player": "^1.5.7",
