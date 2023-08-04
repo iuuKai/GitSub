@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-01-01 13:07:26
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-08 11:02:16
+ * @LastEditTime: 2023-07-13 18:52:47
  * @FilePath: \gitsub\src\api\repo\index.js
  * @Description:
  * @QQ/微信: 790331286
@@ -197,14 +197,14 @@ export function getRepoLatestRelease(params = {}) {
 }
 
 // 获取仓库的所有Issues
-export function getRepoIssueList(params = {}) {
+export function getRepoIssueList(params = {}, isAll = false) {
 	const { owner, repo } = params
 	const url = `/repos/${owner}/${repo}/issues`
 	return request({
 		url,
 		method: 'get',
 		params
-	}).then(res => res.data)
+	}).then(res => (isAll ? res : res.data))
 }
 
 // 获取仓库的某个Issue
@@ -227,4 +227,15 @@ export function getRepoIssueCommentList(params = {}) {
 		method: 'get',
 		params
 	}).then(res => res.data)
+}
+
+// 获取Pull Request列表
+export function getRepoPullRequestList(params = {}, isAll = false) {
+	const { owner, repo } = params
+	const url = `/repos/${owner}/${repo}/pulls`
+	return request({
+		url,
+		method: 'get',
+		params
+	}).then(res => (isAll ? res : res.data))
 }

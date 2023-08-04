@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-11-30 08:07:33
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-08 10:16:52
+ * @LastEditTime: 2023-07-10 15:27:18
  * @FilePath: \gitsub\src\store\modules\repo.js
  * @Description:
  * @QQ/微信: 790331286
@@ -37,7 +37,9 @@ export const useRepoStore = defineStore({
 		// 所有发行版
 		releases: [],
 		releasesTotal: 0,
-		languages: []
+		languages: [],
+		issuesTotal: 0,
+		pullsTotal: 0
 	}),
 	getters: {
 		accountStore() {

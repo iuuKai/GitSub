@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-03-04 15:18:39
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-06 16:11:10
+ * @LastEditTime: 2023-07-14 13:21:51
  * @FilePath: \gitsub\src\views\Repo\components\repo-header.jsx
  * @Description:
  * @QQ/微信: 790331286
@@ -18,6 +18,7 @@ import {
 	DownOutlined,
 	UnlockOutlined
 } from '@ant-design/icons-vue'
+import { useRepoStore } from '@/store/modules/repo'
 import { isArray } from 'lodash-es'
 import { useRoute, useRouter } from 'vue-router'
 import style from './components.module.less'
@@ -29,12 +30,17 @@ export default defineComponent({
 	setup(props, { emit }) {
 		const route = useRoute()
 		const router = useRouter()
+		const repoStore = useRepoStore()
 
+		const count = {
+			issues: repoStore.issuesTotal
+		}
 		const state = reactive({
 			activeKey: 0,
 			tabs: [
 				{ label: 'Code', icon: ReadOutlined },
-				{ label: 'Issues', icon: HddOutlined },
+				{ label: 'Issues', icon: HddOutlined, count: count['issues'] },
+				{ label: 'Pull Requests' },
 				{ label: 'Events', icon: StarOutlined },
 				{ label: 'Contributors', icon: UserOutlined }
 			]

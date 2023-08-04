@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-05-27 06:25:53
  * @LastEditors: iuukai
- * @LastEditTime: 2023-05-29 09:22:33
+ * @LastEditTime: 2023-07-10 18:43:45
  * @FilePath: \gitsub\src\components\basic\tab-bar\tab-bar.jsx
  * @Description:
  * @QQ/微信: 790331286
@@ -79,6 +79,7 @@ export default defineComponent({
 								<a-space>
 									{item[fieldNames.icon] && h(item[fieldNames.icon])}
 									{item[fieldNames.label] || item}
+									{(item.count || item.count === 0) && item.count}
 								</a-space>
 							</div>
 						</li>

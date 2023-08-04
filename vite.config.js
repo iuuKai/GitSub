@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2022-10-21 00:44:41
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-03 12:32:00
+ * @LastEditTime: 2023-07-28 21:20:29
  * @FilePath: \gitsub\vite.config.js
  * @Description:
  * @QQ/微信: 790331286
@@ -90,6 +90,7 @@ export default defineConfig(({ mode }) => ({
 			gzipSize: true,
 			// 启用 brotli 压缩大小报告
 			brotliSize: true
+			// file: 'stats.html'
 		}),
 		importToCDN({
 			modules: [

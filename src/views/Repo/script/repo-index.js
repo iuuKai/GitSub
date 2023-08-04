@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-06-24 02:39:46
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-06 18:13:17
+ * @LastEditTime: 2023-07-13 23:32:54
  * @FilePath: \gitsub\src\views\Repo\script\repo-index.js
  * @Description:
  * @QQ/微信: 790331286
@@ -10,7 +10,7 @@
 import { useRepoStore } from '@/store/modules/repo'
 import colors from '@/utils/colors.json'
 import { Base64 } from '@/utils/crypto'
-import { isArray, isEmpty, toNumber, sum, round } from 'lodash-es'
+import { isArray, isEmpty, toNumber, sum, subtract, round } from 'lodash-es'
 
 const repoStore = useRepoStore()
 
@@ -140,7 +140,7 @@ export const repoContributors = async (to = {}, params = {}) => {
 }
 
 // 仓库发行版
-export const repoReleases = async (to = {}, params = {}) => {
+export const repoReleasesTotal = async (to = {}, params = {}) => {
 	try {
 		const { owner, repo } = to.params
 		const { data, meta } = await repoStore.apiGetRepoReleaseList(
@@ -153,8 +153,7 @@ export const repoReleases = async (to = {}, params = {}) => {
 		)
 		const total = meta.total_count || meta.last?.page || data.length
 		repoStore.setRepoState('releases', data)
-		if ((meta.last && toNumber(meta.last.per_page) === 1) || !data.length)
-			repoStore.setRepoState('releasesTotal', toNumber(total))
+		if (total) repoStore.setRepoState('releasesTotal', toNumber(total))
 	} catch (err) {
 		// return { err, msg: '获取仓库所有发行版失败' }
 		return routerCatchNext(null, err, '获取仓库所有发行版失败')
@@ -182,21 +181,72 @@ export const repoLanguages = async (to = {}, params = {}) => {
 	}
 }
 
+// Pull Request列表
+export const repoPullsTotal = async (to = {}, params = {}) => {
+	try {
+		const { owner, repo } = to.params
+		const { data, meta } = await repoStore.apiGetRepoPullRequestList(
+			{ owner, repo, per_page: 1 },
+			true
+		)
+		const total = meta.total_count || meta.last?.page || data.length
+		if (total) repoStore.setRepoState('pullsTotal', toNumber(total))
+	} catch (err) {
+		return routerCatchNext(null, err, '获取Pull Request列表失败')
+	}
+}
+// ????????????????????????????????????????????????????????????????
+// Issues总数
+export const repoIssuesTotal = async (to = {}, params = {}) => {
+	try {
+		const { owner, repo, type } = to.params
+		const issues = repoStore.apiGetRepoIssueList(
+			{
+				owner,
+				repo,
+				per_page: 1,
+				state: 'open'
+			},
+			true
+		)
+		const other =
+			type === 'gitee'
+				? repoStore.apiGetRepoIssueList(
+						{
+							owner,
+							repo,
+							per_page: 1,
+							state: 'progressing'
+						},
+						true
+				  )
+				: repoStore.apiGetRepoPullRequestList({ owner, repo, per_page: 1 }, true)
+		const promiseList = [issues, other]
+		const list = (await Promise.all(promiseList)).map(({ data, meta }) =>
+			Number(meta.total_count || meta.last?.page || data.length)
+		)
+		const issuesTotal = type === 'gitee' ? sum(list) : subtract(...list)
+		if (issuesTotal) repoStore.setRepoState('issuesTotal', toNumber(issuesTotal))
+	} catch (err) {
+		return routerCatchNext(null, err, '获取Issues总数失败')
+	}
+}
+
 export default function (to) {
 	const list = [
 		{ task: repoDetails, isTaskAtHome: false },
 		{ task: repoContents, isTaskAtHome: false },
 		{ task: curPathCommit, isTaskAtHome: false },
-		{
-			task: repoEvents,
-			isTaskAtHome: true,
-			params: {
-				limit: 100
-			}
-		},
+		// {
+		// 	task: repoEvents,
+		// 	isTaskAtHome: true,
+		// 	params: {
+		// 		limit: 100
+		// 	}
+		// },
 		{ task: repoContributors, isTaskAtHome: true },
 		{
-			task: repoReleases,
+			task: repoReleasesTotal,
 			isTaskAtHome: true,
 			params: {
 				page: 1,
@@ -206,6 +256,10 @@ export default function (to) {
 		{
 			task: repoLanguages,
 			isTaskAtHome: true
+		},
+		{
+			task: repoIssuesTotal,
+			isTaskAtHome: false
 		}
 	]
 	const { path } = to.params

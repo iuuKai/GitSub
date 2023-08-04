@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-02-28 00:50:42
  * @LastEditors: iuukai
- * @LastEditTime: 2023-07-08 07:51:06
+ * @LastEditTime: 2023-07-11 09:24:20
  * @FilePath: \gitsub\src\components\basic\markdown\hooks\useMarked.js
  * @Description:
  * @QQ/微信: 790331286
@@ -113,7 +113,7 @@ const renderer = {
 
 		return `<li ${taskListItemClass}>${text}</li>`
 	},
-	code(code, infostring, escaped) {
+	code(code, infostring = '', escaped) {
 		if (['mermaid', 'sequence'].includes(infostring.toLowerCase())) {
 			let graph = code
 			const id = `mermaid-${Math.random().toString(36).substring(7)}`
